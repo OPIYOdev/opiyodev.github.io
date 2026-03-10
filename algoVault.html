@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlgoVault — Billion Dollar Algorithm Encyclopedia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;600&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #00ff88;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --accent4: #ef4444;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --code-bg: #0d1117;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top:0; z-index:100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 2rem;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .logo span { color: var(--text); }
+
+  .search-bar {
+    flex: 1; max-width: 500px;
+    display: flex; align-items: center; gap: 0.75rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 1rem;
+    transition: border-color 0.2s;
+  }
+  .search-bar:focus-within { border-color: var(--accent); }
+  .search-bar input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.6rem 0;
+  }
+  .search-bar input::placeholder { color: var(--muted); }
+  .search-icon { color: var(--muted); font-size: 1rem; }
+
+  .header-stats {
+    margin-left: auto;
+    display: flex; gap: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .header-stats span b { color: var(--accent); }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 64px);
+    position: relative; z-index:1;
+  }
+
+  /* SIDEBAR */
+  aside {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky; top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-track { background: transparent; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-section {
+    margin-bottom: 0.5rem;
+  }
+  .sidebar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 1.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .sidebar-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .cat-btn {
+    display: flex; align-items: center; gap: 0.75rem;
+    width: 100%;
+    padding: 0.55rem 1.5rem;
+    background: none; border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .cat-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .cat-btn.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,255,136,0.05); }
+  .cat-btn .cat-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cat-btn .cat-count {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* MAIN CONTENT */
+  main {
+    padding: 2rem;
+    overflow-y: auto;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, rgba(0,255,136,0.05) 0%, rgba(124,58,237,0.05) 100%);
+    border: 1px solid rgba(0,255,136,0.15);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; right: -50px; top: -50px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,255,136,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .hero p { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+
+  /* ALGO GRID */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    color: var(--text);
+  }
+  .section-title span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .algo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .algo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .algo-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,255,136,0.1);
+  }
+  .algo-card-header {
+    padding: 1.25rem 1.25rem 1rem;
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .algo-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .algo-card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.2rem;
+  }
+  .algo-card-company {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .algo-card-body {
+    padding: 0 1.25rem 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .algo-card-footer {
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    align-items: center;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 400;
+  }
+  .complexity-badge {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; justify-content: center; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%; max-width: 900px;
+    height: fit-content;
+    position: relative;
+    overflow: hidden;
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity:0; transform: scale(0.95) translateY(20px); }
+    to { opacity:1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+  .modal-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+  }
+  .modal-subtitle { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .modal-close {
+    margin-left: auto;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--accent); }
+
+  .modal-body { padding: 1.5rem 2rem 2rem; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .info-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+  }
+  .info-card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .info-card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .modal-tabs {
+    display: flex; gap: 0.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    background: none; border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .description-block {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: #c0c0d0;
+    margin-bottom: 1.25rem;
+  }
+  .description-block b { color: var(--accent); font-weight: 600; }
+
+  .real-world-block {
+    background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+  .real-world-block h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .real-world-block p { font-size: 0.875rem; color: #c0c0d0; line-height: 1.65; }
+
+  .impl-selector {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;
+  }
+  .impl-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .impl-btn:hover, .impl-btn.active {
+    border-color: var(--accent2);
+    color: #c4b5fd;
+    background: rgba(124,58,237,0.1);
+  }
+
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .code-filename::before { content: '●'; color: var(--accent); }
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  pre {
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: #abb2bf;
+    tab-size: 4;
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Syntax highlight colors */
+  .kw { color: #c678dd; }
+  .fn { color: #61afef; }
+  .st { color: #98c379; }
+  .cm { color: #5c6370; font-style: italic; }
+  .nm { color: #d19a66; }
+  .op { color: #56b6c2; }
+  .dc { color: #e5c07b; }
+  .bi { color: #e06c75; }
+
+  .complexity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  .complexity-table th {
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .complexity-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    color: var(--text);
+  }
+  .complexity-table tr:last-child td { border-bottom: none; }
+  .good { color: #98c379; }
+  .ok { color: var(--accent3); }
+  .bad { color: var(--accent4); }
+
+  /* NO-RESULTS */
+  .no-results {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .no-results.show { display: block; }
+  .no-results h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { display: none; }
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal-overlay { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Algo<span>Vault</span></div>
+  <div class="search-bar">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Search algorithms, companies, patterns..." />
+  </div>
+  <div class="header-stats">
+    <span><b id="algoCount">0</b> algorithms</span>
+    <span><b>12</b> categories</span>
+    <span><b>100%</b> Python</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Categories</div>
+      <button class="cat-btn active" data-cat="all">
+        <span class="cat-dot" style="background:#00ff88"></span>
+        All Algorithms
+        <span class="cat-count" id="countAll">0</span>
+      </button>
+      <button class="cat-btn" data-cat="search">
+        <span class="cat-dot" style="background:#60a5fa"></span>
+        Search & Retrieval
+        <span class="cat-count" id="countSearch">0</span>
+      </button>
+      <button class="cat-btn" data-cat="graph">
+        <span class="cat-dot" style="background:#a78bfa"></span>
+        Graph & Network
+        <span class="cat-count" id="countGraph">0</span>
+      </button>
+      <button class="cat-btn" data-cat="ml">
+        <span class="cat-dot" style="background:#f59e0b"></span>
+        ML & Recommendations
+        <span class="cat-count" id="countMl">0</span>
+      </button>
+      <button class="cat-btn" data-cat="distributed">
+        <span class="cat-dot" style="background:#34d399"></span>
+        Distributed Systems
+        <span class="cat-count" id="countDistributed">0</span>
+      </button>
+      <button class="cat-btn" data-cat="dp">
+        <span class="cat-dot" style="background:#fb7185"></span>
+        Dynamic Programming
+        <span class="cat-count" id="countDp">0</span>
+      </button>
+      <button class="cat-btn" data-cat="sort">
+        <span class="cat-dot" style="background:#38bdf8"></span>
+        Sorting & Ordering
+        <span class="cat-count" id="countSort">0</span>
+      </button>
+      <button class="cat-btn" data-cat="string">
+        <span class="cat-dot" style="background:#e879f9"></span>
+        String & Text
+        <span class="cat-count" id="countString">0</span>
+      </button>
+      <button class="cat-btn" data-cat="crypto">
+        <span class="cat-dot" style="background:#fbbf24"></span>
+        Crypto & Security
+        <span class="cat-count" id="countCrypto">0</span>
+      </button>
+      <button class="cat-btn" data-cat="cache">
+        <span class="cat-dot" style="background:#4ade80"></span>
+        Caching & Storage
+        <span class="cat-count" id="countCache">0</span>
+      </button>
+      <button class="cat-btn" data-cat="stream">
+        <span class="cat-dot" style="background:#f97316"></span>
+        Streaming & Data
+        <span class="cat-count" id="countStream">0</span>
+      </button>
+      <button class="cat-btn" data-cat="tree">
+        <span class="cat-dot" style="background:#84cc16"></span>
+        Trees & Structures
+        <span class="cat-count" id="countTree">0</span>
+      </button>
+      <button class="cat-btn" data-cat="geo">
+        <span class="cat-dot" style="background:#22d3ee"></span>
+        Geo & Spatial
+        <span class="cat-count" id="countGeo">0</span>
+      </button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div class="hero-tag">Live Database</div>
+      <h1>Billion Dollar Algorithm Encyclopedia</h1>
+      <p>Every algorithm powering the world's most valuable software companies — with full Python implementations, complexity analysis, and real-world use cases from Google, Meta, Amazon, Netflix, Uber, and more.</p>
+    </div>
+
+    <div class="section-title" id="sectionTitle">
+      All Algorithms <span id="sectionCount"></span>
+    </div>
+
+    <div class="algo-grid" id="algoGrid"></div>
+    <div class="no-results" id="noResults">
+      <h3>No algorithms found</h3>
+      <p>Try a different search term or category</p>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-icon" id="mIcon"></div>
+      <div>
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-subtitle" id="mSubtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// THE ALGORITHM DATABASE
+// ═══════════════════════════════════════════════════════════════════
+const ALGORITHMS = [
+
+// ─── SEARCH & RETRIEVAL ───────────────────────────────────────────
+{
+  id: 'binary-search',
+  name: 'Binary Search',
+  category: 'search',
+  icon: '🔍',
+  color: '#60a5fa',
+  companies: ['Google', 'Amazon', 'Meta', 'Apple'],
+  description: 'Binary search divides a sorted array in half at each step, achieving O(log n) lookups. It is the backbone of database indexing, autocomplete systems, and range queries in virtually every search engine and database.',
+  realWorld: 'Google uses binary search in its Bigtable SSTable lookups — finding a key in a 1TB sorted file takes just ~40 comparisons. Amazon\'s order lookup systems reduce database read latency from O(n) to O(log n), saving millions in compute per day.',
+  complexity: [
+    { case: 'Best', time: 'O(1)', space: 'O(1)', note: 'Middle element' },
+    { case: 'Average', time: 'O(log n)', space: 'O(1)', note: 'Standard case' },
+    { case: 'Worst', time: 'O(log n)', space: 'O(1)', note: 'Element at ends' },
+  ],
+  tags: ['Divide & Conquer', 'Sorted Array', 'Logarithmic'],
+  impls: [
+    {
+      label: 'Iterative',
+      filename: 'binary_search_iterative.py',
+      code: `<span class="kw">def</span> <span class="fn">binary_search</span>(arr: list, target: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""
+    Iterative binary search.
+    Returns index of target or -1 if not found.
+    Time: O(log n) | Space: O(1)
+    """</span>
+    left, right = <span class="nm">0</span>, <span class="bi">len</span>(arr) - <span class="nm">1</span>
+
+    <span class="kw">while</span> left <= right:
+        mid = left + (right - left) // <span class="nm">2</span>  <span class="cm"># Avoids overflow</span>
+
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] < target:
+            left = mid + <span class="nm">1</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="nm">1</span>
+
+    <span class="kw">return</span> -<span class="nm">1</span>
+
+
+<span class="cm"># ── Usage ──────────────────────────────────────────</span>
+arr = [<span class="nm">2</span>, <span class="nm">5</span>, <span class="nm">8</span>, <span class="nm">12</span>, <span class="nm">16</span>, <span class="nm">23</span>, <span class="nm">38</span>, <span class="nm">56</span>, <span class="nm">72</span>, <span class="nm">91</span>]
+<span class="bi">print</span>(binary_search(arr, <span class="nm">23</span>))   <span class="cm"># → 5</span>
+<span class="bi">print</span>(binary_search(arr, <span class="nm">99</span>))   <span class="cm"># → -1</span>`
+    },
+    {
+      label: 'Recursive',
+      filename: 'binary_search_recursive.py',
+      code: `<span class="kw">def</span> <span class="fn">binary_search_recursive</span>(
+    arr: list, target: <span class="bi">int</span>,
+    left: <span class="bi">int</span> = <span class="nm">0</span>, right: <span class="bi">int</span> = <span class="kw">None</span>
+) -> <span class="bi">int</span>:
+    <span class="st">"""Recursive binary search. Time: O(log n) | Space: O(log n)"""</span>
+    <span class="kw">if</span> right <span class="kw">is</span> <span class="kw">None</span>:
+        right = <span class="bi">len</span>(arr) - <span class="nm">1</span>
+
+    <span class="kw">if</span> left > right:
+        <span class="kw">return</span> -<span class="nm">1</span>
+
+    mid = (left + right) // <span class="nm">2</span>
+
+    <span class="kw">if</span> arr[mid] == target:
+        <span class="kw">return</span> mid
+    <span class="kw">elif</span> arr[mid] < target:
+        <span class="kw">return</span> binary_search_recursive(arr, target, mid + <span class="nm">1</span>, right)
+    <span class="kw">else</span>:
+        <span class="kw">return</span> binary_search_recursive(arr, target, left, mid - <span class="nm">1</span>)`
+    },
+    {
+      label: 'First/Last Occurrence',
+      filename: 'binary_search_bounds.py',
+      code: `<span class="kw">def</span> <span class="fn">lower_bound</span>(arr: list, target: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""First index where arr[i] >= target (like C++ lower_bound)"""</span>
+    left, right = <span class="nm">0</span>, <span class="bi">len</span>(arr)
+    <span class="kw">while</span> left < right:
+        mid = (left + right) // <span class="nm">2</span>
+        <span class="kw">if</span> arr[mid] < target:
+            left = mid + <span class="nm">1</span>
+        <span class="kw">else</span>:
+            right = mid
+    <span class="kw">return</span> left
+
+
+<span class="kw">def</span> <span class="fn">upper_bound</span>(arr: list, target: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""First index where arr[i] > target (like C++ upper_bound)"""</span>
+    left, right = <span class="nm">0</span>, <span class="bi">len</span>(arr)
+    <span class="kw">while</span> left < right:
+        mid = (left + right) // <span class="nm">2</span>
+        <span class="kw">if</span> arr[mid] <= target:
+            left = mid + <span class="nm">1</span>
+        <span class="kw">else</span>:
+            right = mid
+    <span class="kw">return</span> left
+
+
+<span class="kw">def</span> <span class="fn">count_occurrences</span>(arr: list, target: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""Count how many times target appears in sorted array."""</span>
+    <span class="kw">return</span> upper_bound(arr, target) - lower_bound(arr, target)
+
+<span class="cm"># Example: [1,2,2,2,3,4] → count_occurrences(arr, 2) = 3</span>`
+    },
+    {
+      label: 'On Answer Space',
+      filename: 'binary_search_answer.py',
+      code: `<span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">sqrt_binary_search</span>(n: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""Binary search on the answer space. Used in DB query optimization."""</span>
+    <span class="kw">if</span> n < <span class="nm">2</span>: <span class="kw">return</span> n
+    left, right = <span class="nm">1</span>, n // <span class="nm">2</span>
+    <span class="kw">while</span> left <= right:
+        mid = (left + right) // <span class="nm">2</span>
+        <span class="kw">if</span> mid * mid == n:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> mid * mid < n:
+            left = mid + <span class="nm">1</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="nm">1</span>
+    <span class="kw">return</span> right
+
+
+<span class="kw">def</span> <span class="fn">min_eating_speed</span>(piles: list[<span class="bi">int</span>], h: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="st">"""
+    Binary search on answer space.
+    Real-world: Rate limiting, bandwidth allocation (Cloudflare).
+    """</span>
+    <span class="kw">def</span> <span class="fn">can_finish</span>(speed: <span class="bi">int</span>) -> <span class="bi">bool</span>:
+        <span class="kw">return</span> <span class="bi">sum</span>(math.ceil(p / speed) <span class="kw">for</span> p <span class="kw">in</span> piles) <= h
+
+    left, right = <span class="nm">1</span>, <span class="bi">max</span>(piles)
+    <span class="kw">while</span> left < right:
+        mid = (left + right) // <span class="nm">2</span>
+        <span class="kw">if</span> can_finish(mid): right = mid
+        <span class="kw">else</span>: left = mid + <span class="nm">1</span>
+    <span class="kw">return</span> left`
+    }
+  ]
+},
+
+// ─── CONSISTENT HASHING ──────────────────────────────────────────
+{
+  id: 'consistent-hashing',
+  name: 'Consistent Hashing',
+  category: 'distributed',
+  icon: '🔄',
+  color: '#34d399',
+  companies: ['Amazon DynamoDB', 'Discord', 'Cassandra', 'Akamai CDN'],
+  description: 'Consistent hashing maps keys to a circular ring, ensuring minimal key remapping when nodes are added or removed. With virtual nodes it achieves near-perfect load balance. It powers billion-dollar CDNs, databases, and chat systems.',
+  realWorld: 'Amazon DynamoDB uses consistent hashing with virtual nodes to distribute 100s of billions of items across thousands of servers with <1% reshuffling during scaling. Discord uses it to shard 19M+ concurrent voice connections.',
+  complexity: [
+    { case: 'Lookup', time: 'O(log n)', space: 'O(n)', note: 'n = nodes' },
+    { case: 'Add Node', time: 'O(log n + k/n)', space: 'O(n)', note: 'k = keys' },
+    { case: 'Remove Node', time: 'O(log n + k/n)', space: 'O(n)', note: 'Minimal reshuffling' },
+  ],
+  tags: ['Hashing', 'Distributed', 'Sharding', 'Ring'],
+  impls: [
+    {
+      label: 'Basic Ring',
+      filename: 'consistent_hashing.py',
+      code: `<span class="kw">import</span> hashlib
+<span class="kw">import</span> bisect
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">class</span> <span class="dc">ConsistentHashing</span>:
+    <span class="st">"""
+    Consistent hashing ring for distributed systems.
+    Used in: DynamoDB, Cassandra, Redis Cluster, CDNs.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, replicas: <span class="bi">int</span> = <span class="nm">150</span>):
+        <span class="bi">self</span>.replicas = replicas  <span class="cm"># Virtual nodes per server</span>
+        <span class="bi">self</span>.ring: dict[<span class="bi">int</span>, <span class="bi">str</span>] = {}
+        <span class="bi">self</span>.sorted_keys: list[<span class="bi">int</span>] = []
+
+    <span class="kw">def</span> <span class="fn">_hash</span>(<span class="bi">self</span>, key: <span class="bi">str</span>) -> <span class="bi">int</span>:
+        <span class="kw">return</span> <span class="bi">int</span>(hashlib.md5(key.encode()).hexdigest(), <span class="nm">16</span>)
+
+    <span class="kw">def</span> <span class="fn">add_node</span>(<span class="bi">self</span>, node: <span class="bi">str</span>) -> <span class="kw">None</span>:
+        <span class="st">"""Add a server node with its virtual copies."""</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="bi">self</span>.replicas):
+            key = <span class="bi">self</span>._hash(<span class="st">f"</span>{node}<span class="st">-replica-</span>{i}<span class="st">"</span>)
+            <span class="bi">self</span>.ring[key] = node
+            bisect.insort(<span class="bi">self</span>.sorted_keys, key)
+
+    <span class="kw">def</span> <span class="fn">remove_node</span>(<span class="bi">self</span>, node: <span class="bi">str</span>) -> <span class="kw">None</span>:
+        <span class="st">"""Remove a server node and all its virtual copies."""</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="bi">self</span>.replicas):
+            key = <span class="bi">self</span>._hash(<span class="st">f"</span>{node}<span class="st">-replica-</span>{i}<span class="st">"</span>)
+            <span class="kw">del</span> <span class="bi">self</span>.ring[key]
+            idx = bisect.bisect_left(<span class="bi">self</span>.sorted_keys, key)
+            <span class="bi">self</span>.sorted_keys.pop(idx)
+
+    <span class="kw">def</span> <span class="fn">get_node</span>(<span class="bi">self</span>, key: <span class="bi">str</span>) -> Optional[<span class="bi">str</span>]:
+        <span class="st">"""Find responsible node for a given key."""</span>
+        <span class="kw">if not</span> <span class="bi">self</span>.ring:
+            <span class="kw">return</span> <span class="kw">None</span>
+        h = <span class="bi">self</span>._hash(key)
+        idx = bisect.bisect(<span class="bi">self</span>.sorted_keys, h) % <span class="bi">len</span>(<span class="bi">self</span>.sorted_keys)
+        <span class="kw">return</span> <span class="bi">self</span>.ring[<span class="bi">self</span>.sorted_keys[idx]]
+
+
+<span class="cm"># ── Demo: DynamoDB-style sharding ──────────────────</span>
+ring = ConsistentHashing(replicas=<span class="nm">150</span>)
+<span class="kw">for</span> node <span class="kw">in</span> [<span class="st">"db-1"</span>, <span class="st">"db-2"</span>, <span class="st">"db-3"</span>]:
+    ring.add_node(node)
+
+user_ids = [<span class="st">"user:1001"</span>, <span class="st">"user:2004"</span>, <span class="st">"user:3987"</span>]
+<span class="kw">for</span> uid <span class="kw">in</span> user_ids:
+    <span class="bi">print</span>(<span class="st">f"</span>{uid}<span class="st"> → </span>{ring.get_node(uid)}<span class="st">"</span>)`
+    },
+    {
+      label: 'With Replication',
+      filename: 'consistent_hashing_replicated.py',
+      code: `<span class="kw">import</span> hashlib, bisect
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">class</span> <span class="dc">ReplicatedHashRing</span>:
+    <span class="st">"""
+    Consistent hashing with N-way replication.
+    Cassandra uses this for fault tolerance.
+    replication_factor=3 means data lives on 3 nodes.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, replicas=<span class="nm">100</span>, replication_factor=<span class="nm">3</span>):
+        <span class="bi">self</span>.replicas = replicas
+        <span class="bi">self</span>.rf = replication_factor
+        <span class="bi">self</span>.ring: dict = {}
+        <span class="bi">self</span>.sorted_keys = []
+        <span class="bi">self</span>.nodes: list = []
+
+    <span class="kw">def</span> <span class="fn">_hash</span>(<span class="bi">self</span>, s: <span class="bi">str</span>) -> <span class="bi">int</span>:
+        <span class="kw">return</span> <span class="bi">int</span>(hashlib.sha256(s.encode()).hexdigest(), <span class="nm">16</span>) % (<span class="nm">2</span>**<span class="nm">32</span>)
+
+    <span class="kw">def</span> <span class="fn">add_node</span>(<span class="bi">self</span>, node: <span class="bi">str</span>):
+        <span class="bi">self</span>.nodes.append(node)
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="bi">self</span>.replicas):
+            h = <span class="bi">self</span>._hash(<span class="st">f"</span>{node}:<span class="st">{i}"</span>)
+            <span class="bi">self</span>.ring[h] = node
+            bisect.insort(<span class="bi">self</span>.sorted_keys, h)
+
+    <span class="kw">def</span> <span class="fn">get_nodes</span>(<span class="bi">self</span>, key: <span class="bi">str</span>) -> list[<span class="bi">str</span>]:
+        <span class="st">"""Return rf unique nodes responsible for this key."""</span>
+        <span class="kw">if not</span> <span class="bi">self</span>.ring:
+            <span class="kw">return</span> []
+        h = <span class="bi">self</span>._hash(key)
+        idx = bisect.bisect(<span class="bi">self</span>.sorted_keys, h)
+        result, seen = [], <span class="bi">set</span>()
+
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="bi">len</span>(<span class="bi">self</span>.sorted_keys)):
+            node = <span class="bi">self</span>.ring[<span class="bi">self</span>.sorted_keys[idx % <span class="bi">len</span>(<span class="bi">self</span>.sorted_keys)]]
+            <span class="kw">if</span> node <span class="kw">not in</span> seen:
+                result.append(node)
+                seen.add(node)
+            <span class="kw">if</span> <span class="bi">len</span>(result) == <span class="bi">self</span>.rf:
+                <span class="kw">break</span>
+            idx += <span class="nm">1</span>
+        <span class="kw">return</span> result`
+    }
+  ]
+},
+
+// ─── DIJKSTRA ────────────────────────────────────────────────────
+{
+  id: 'dijkstra',
+  name: "Dijkstra's Shortest Path",
+  category: 'graph',
+  icon: '🗺️',
+  color: '#a78bfa',
+  companies: ['Google Maps', 'Uber', 'LinkedIn', 'Facebook'],
+  description: 'Dijkstra\'s algorithm finds shortest paths in weighted graphs using a priority queue (min-heap). It is used in mapping systems, network routing, and social network recommendation systems worldwide.',
+  realWorld: 'Google Maps processes 1B+ route queries per day using a variant of Dijkstra\'s with A* heuristics. Uber uses it for driver-rider matching and ETA calculation. LinkedIn\'s "People You May Know" uses shortest path on its social graph.',
+  complexity: [
+    { case: 'Time', time: 'O((V+E) log V)', space: 'O(V)', note: 'With binary heap' },
+    { case: 'Time (Fibonacci)', time: 'O(E + V log V)', space: 'O(V)', note: 'Fibonacci heap' },
+    { case: 'Dense graphs', time: 'O(V²)', space: 'O(V)', note: 'Adjacency matrix' },
+  ],
+  tags: ['Graph', 'Greedy', 'Priority Queue', 'Shortest Path'],
+  impls: [
+    {
+      label: 'Classic (heapq)',
+      filename: 'dijkstra.py',
+      code: `<span class="kw">import</span> heapq
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(
+    graph: dict[<span class="bi">str</span>, list[<span class="bi">tuple</span>]],
+    start: <span class="bi">str</span>
+) -> dict[<span class="bi">str</span>, <span class="bi">float</span>]:
+    <span class="st">"""
+    Dijkstra's algorithm with a min-heap.
+    graph = {node: [(cost, neighbor), ...]}
+    Time: O((V+E) log V) | Space: O(V)
+    Used by: Google Maps, Uber ETA, Network Routing
+    """</span>
+    dist = defaultdict(<span class="kw">lambda</span>: <span class="bi">float</span>(<span class="st">'inf'</span>))
+    dist[start] = <span class="nm">0</span>
+    heap = [(<span class="nm">0</span>, start)]  <span class="cm"># (cost, node)</span>
+
+    <span class="kw">while</span> heap:
+        cost, node = heapq.heappop(heap)
+
+        <span class="kw">if</span> cost > dist[node]:
+            <span class="kw">continue</span>  <span class="cm"># Stale entry</span>
+
+        <span class="kw">for</span> weight, neighbor <span class="kw">in</span> graph.get(node, []):
+            new_cost = cost + weight
+            <span class="kw">if</span> new_cost < dist[neighbor]:
+                dist[neighbor] = new_cost
+                heapq.heappush(heap, (new_cost, neighbor))
+
+    <span class="kw">return</span> <span class="bi">dict</span>(dist)
+
+
+<span class="kw">def</span> <span class="fn">dijkstra_with_path</span>(graph, start, end) -> <span class="bi">tuple</span>:
+    <span class="st">"""Returns (distance, path) to destination."""</span>
+    dist = defaultdict(<span class="kw">lambda</span>: <span class="bi">float</span>(<span class="st">'inf'</span>))
+    dist[start] = <span class="nm">0</span>
+    prev = {}
+    heap = [(<span class="nm">0</span>, start)]
+
+    <span class="kw">while</span> heap:
+        cost, node = heapq.heappop(heap)
+        <span class="kw">if</span> node == end:
+            <span class="kw">break</span>
+        <span class="kw">if</span> cost > dist[node]:
+            <span class="kw">continue</span>
+        <span class="kw">for</span> w, nb <span class="kw">in</span> graph.get(node, []):
+            nc = cost + w
+            <span class="kw">if</span> nc < dist[nb]:
+                dist[nb] = nc
+                prev[nb] = node
+                heapq.heappush(heap, (nc, nb))
+
+    <span class="cm"># Reconstruct path</span>
+    path, cur = [], end
+    <span class="kw">while</span> cur <span class="kw">in</span> prev:
+        path.append(cur); cur = prev[cur]
+    path.append(start)
+    <span class="kw">return</span> dist[end], path[::-<span class="nm">1</span>]
+
+
+<span class="cm"># ── Example: City road network ─────────────────────</span>
+roads = {
+    <span class="st">'A'</span>: [(<span class="nm">4</span>, <span class="st">'B'</span>), (<span class="nm">2</span>, <span class="st">'C'</span>)],
+    <span class="st">'B'</span>: [(<span class="nm">3</span>, <span class="st">'D'</span>)],
+    <span class="st">'C'</span>: [(<span class="nm">2</span>, <span class="st">'B'</span>), (<span class="nm">5</span>, <span class="st">'D'</span>)],
+    <span class="st">'D'</span>: []
+}
+dist, path = dijkstra_with_path(roads, <span class="st">'A'</span>, <span class="st">'D'</span>)
+<span class="bi">print</span>(<span class="st">f"Distance: </span>{dist}<span class="st">, Path: </span>{path}<span class="st">"</span>)  <span class="cm"># → 7, ['A','C','B','D']</span>`
+    },
+    {
+      label: 'A* (Google Maps)',
+      filename: 'astar.py',
+      code: `<span class="kw">import</span> heapq
+<span class="kw">from</span> typing <span class="kw">import</span> Callable
+
+<span class="kw">def</span> <span class="fn">astar</span>(
+    graph: dict,
+    start: <span class="bi">str</span>,
+    goal: <span class="bi">str</span>,
+    heuristic: Callable[[<span class="bi">str</span>, <span class="bi">str</span>], <span class="bi">float</span>]
+) -> <span class="bi">tuple</span>:
+    <span class="st">"""
+    A* search — Dijkstra + heuristic guidance.
+    Used by Google Maps, game pathfinding (Unity/Unreal).
+    f(n) = g(n) + h(n) where h is an admissible heuristic.
+    """</span>
+    open_set = [(<span class="nm">0</span>, start)]
+    g_score = {start: <span class="nm">0</span>}
+    came_from = {}
+    f_score = {start: heuristic(start, goal)}
+
+    <span class="kw">while</span> open_set:
+        _, current = heapq.heappop(open_set)
+
+        <span class="kw">if</span> current == goal:
+            path = []
+            <span class="kw">while</span> current <span class="kw">in</span> came_from:
+                path.append(current)
+                current = came_from[current]
+            path.append(start)
+            <span class="kw">return</span> g_score[goal], path[::-<span class="nm">1</span>]
+
+        <span class="kw">for</span> weight, neighbor <span class="kw">in</span> graph.get(current, []):
+            tentative_g = g_score[current] + weight
+            <span class="kw">if</span> tentative_g < g_score.get(neighbor, <span class="bi">float</span>(<span class="st">'inf'</span>)):
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g
+                f = tentative_g + heuristic(neighbor, goal)
+                f_score[neighbor] = f
+                heapq.heappush(open_set, (f, neighbor))
+
+    <span class="kw">return</span> <span class="bi">float</span>(<span class="st">'inf'</span>), []
+
+
+<span class="cm"># ── Geo heuristic (Manhattan distance for grid maps) ─</span>
+coords = {<span class="st">'A'</span>: (<span class="nm">0</span>,<span class="nm">0</span>), <span class="st">'B'</span>: (<span class="nm">1</span>,<span class="nm">2</span>), <span class="st">'C'</span>: (<span class="nm">2</span>,<span class="nm">1</span>), <span class="st">'D'</span>: (<span class="nm">3</span>,<span class="nm">3</span>)}
+
+<span class="kw">def</span> <span class="fn">manhattan</span>(a, b):
+    <span class="kw">return</span> <span class="bi">abs</span>(coords[a][<span class="nm">0</span>]-coords[b][<span class="nm">0</span>]) + <span class="bi">abs</span>(coords[a][<span class="nm">1</span>]-coords[b][<span class="nm">1</span>])`
+    }
+  ]
+},
+
+// ─── LRU CACHE ───────────────────────────────────────────────────
+{
+  id: 'lru-cache',
+  name: 'LRU Cache',
+  category: 'cache',
+  icon: '⚡',
+  color: '#4ade80',
+  companies: ['Facebook', 'Twitter/X', 'Netflix', 'Redis'],
+  description: 'Least Recently Used cache evicts the oldest accessed item when capacity is reached. Using a doubly-linked list + hashmap achieves O(1) get and put. It is the core of Redis, Memcached, and CPU caches worldwide.',
+  realWorld: 'Facebook\'s Memcache handles 1B+ requests/second using LRU eviction, serving billions of social feed items. Netflix\'s CDN edge caches use LRU to keep the top 10% of content (which serves 90% of traffic) in hot storage.',
+  complexity: [
+    { case: 'Get', time: 'O(1)', space: 'O(capacity)', note: 'HashMap lookup' },
+    { case: 'Put', time: 'O(1)', space: 'O(capacity)', note: 'HashMap + LinkedList' },
+    { case: 'Evict', time: 'O(1)', space: 'O(capacity)', note: 'Tail removal' },
+  ],
+  tags: ['Cache', 'HashMap', 'Linked List', 'Eviction Policy'],
+  impls: [
+    {
+      label: 'From Scratch',
+      filename: 'lru_cache.py',
+      code: `<span class="kw">class</span> <span class="dc">Node</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, key=<span class="nm">0</span>, val=<span class="nm">0</span>):
+        <span class="bi">self</span>.key = key
+        <span class="bi">self</span>.val = val
+        <span class="bi">self</span>.prev = <span class="bi">self</span>.next = <span class="kw">None</span>
+
+
+<span class="kw">class</span> <span class="dc">LRUCache</span>:
+    <span class="st">"""
+    O(1) LRU Cache using doubly-linked list + hashmap.
+    Used by: Redis, Memcached, CPU L1/L2 caches.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, capacity: <span class="bi">int</span>):
+        <span class="bi">self</span>.cap = capacity
+        <span class="bi">self</span>.cache: dict = {}
+        <span class="cm"># Dummy head=most recent, tail=least recent</span>
+        <span class="bi">self</span>.head = Node()
+        <span class="bi">self</span>.tail = Node()
+        <span class="bi">self</span>.head.next = <span class="bi">self</span>.tail
+        <span class="bi">self</span>.tail.prev = <span class="bi">self</span>.head
+
+    <span class="kw">def</span> <span class="fn">_remove</span>(<span class="bi">self</span>, node: Node) -> <span class="kw">None</span>:
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    <span class="kw">def</span> <span class="fn">_insert_front</span>(<span class="bi">self</span>, node: Node) -> <span class="kw">None</span>:
+        node.next = <span class="bi">self</span>.head.next
+        node.prev = <span class="bi">self</span>.head
+        <span class="bi">self</span>.head.next.prev = node
+        <span class="bi">self</span>.head.next = node
+
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="bi">self</span>, key: <span class="bi">int</span>) -> <span class="bi">int</span>:
+        <span class="kw">if</span> key <span class="kw">not in</span> <span class="bi">self</span>.cache:
+            <span class="kw">return</span> -<span class="nm">1</span>
+        node = <span class="bi">self</span>.cache[key]
+        <span class="bi">self</span>._remove(node)
+        <span class="bi">self</span>._insert_front(node)
+        <span class="kw">return</span> node.val
+
+    <span class="kw">def</span> <span class="fn">put</span>(<span class="bi">self</span>, key: <span class="bi">int</span>, value: <span class="bi">int</span>) -> <span class="kw">None</span>:
+        <span class="kw">if</span> key <span class="kw">in</span> <span class="bi">self</span>.cache:
+            <span class="bi">self</span>._remove(<span class="bi">self</span>.cache[key])
+        node = Node(key, value)
+        <span class="bi">self</span>.cache[key] = node
+        <span class="bi">self</span>._insert_front(node)
+
+        <span class="kw">if</span> <span class="bi">len</span>(<span class="bi">self</span>.cache) > <span class="bi">self</span>.cap:
+            lru = <span class="bi">self</span>.tail.prev  <span class="cm"># Evict LRU</span>
+            <span class="bi">self</span>._remove(lru)
+            <span class="kw">del</span> <span class="bi">self</span>.cache[lru.key]`
+    },
+    {
+      label: 'Using OrderedDict',
+      filename: 'lru_ordered_dict.py',
+      code: `<span class="kw">from</span> collections <span class="kw">import</span> OrderedDict
+
+<span class="kw">class</span> <span class="dc">LRUCachePythonic</span>:
+    <span class="st">"""Pythonic LRU using OrderedDict (cleaner, same O(1) complexity)."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, capacity: <span class="bi">int</span>):
+        <span class="bi">self</span>.cap = capacity
+        <span class="bi">self</span>.cache = OrderedDict()
+
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="bi">self</span>, key: <span class="bi">int</span>) -> <span class="bi">int</span>:
+        <span class="kw">if</span> key <span class="kw">not in</span> <span class="bi">self</span>.cache:
+            <span class="kw">return</span> -<span class="nm">1</span>
+        <span class="bi">self</span>.cache.move_to_end(key)
+        <span class="kw">return</span> <span class="bi">self</span>.cache[key]
+
+    <span class="kw">def</span> <span class="fn">put</span>(<span class="bi">self</span>, key: <span class="bi">int</span>, value: <span class="bi">int</span>) -> <span class="kw">None</span>:
+        <span class="kw">if</span> key <span class="kw">in</span> <span class="bi">self</span>.cache:
+            <span class="bi">self</span>.cache.move_to_end(key)
+        <span class="bi">self</span>.cache[key] = value
+        <span class="kw">if</span> <span class="bi">len</span>(<span class="bi">self</span>.cache) > <span class="bi">self</span>.cap:
+            <span class="bi">self</span>.cache.popitem(last=<span class="kw">False</span>)  <span class="cm"># Remove LRU (first)</span>
+
+
+<span class="cm"># ── Using Python's built-in functools.lru_cache ──── </span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="op">@lru_cache</span>(maxsize=<span class="nm">128</span>)
+<span class="kw">def</span> <span class="fn">expensive_query</span>(user_id: <span class="bi">int</span>) -> <span class="bi">dict</span>:
+    <span class="st">"""Auto-cached function. Used in API response caching."""</span>
+    <span class="kw">return</span> {<span class="st">"user"</span>: user_id, <span class="st">"data"</span>: <span class="st">"..."</span>}`
+    }
+  ]
+},
+
+// ─── BLOOM FILTER ────────────────────────────────────────────────
+{
+  id: 'bloom-filter',
+  name: 'Bloom Filter',
+  category: 'stream',
+  icon: '🌸',
+  color: '#f97316',
+  companies: ['Google Bigtable', 'Facebook', 'Cassandra', 'Medium'],
+  description: 'A Bloom filter is a probabilistic data structure that tests set membership with zero false negatives and configurable false positives, using only a bit array and k hash functions. It saves enormous amounts of I/O by eliminating unnecessary disk lookups.',
+  realWorld: 'Google Bigtable uses Bloom filters to avoid disk lookups for non-existent rows, reducing read latency by ~95%. Medium uses it to avoid recommending articles users have already read. Facebook uses it to filter spammy URLs before database checks.',
+  complexity: [
+    { case: 'Add', time: 'O(k)', space: 'O(m bits)', note: 'k hash functions' },
+    { case: 'Query', time: 'O(k)', space: 'O(m bits)', note: 'No false negatives' },
+    { case: 'Space', time: 'O(1)', space: '~10 bits/item', note: 'vs 64 bits (HashSet)' },
+  ],
+  tags: ['Probabilistic', 'Bit Array', 'Hashing', 'Space Efficient'],
+  impls: [
+    {
+      label: 'Classic',
+      filename: 'bloom_filter.py',
+      code: `<span class="kw">import</span> math
+<span class="kw">import</span> hashlib
+
+<span class="kw">class</span> <span class="dc">BloomFilter</span>:
+    <span class="st">"""
+    Space-efficient probabilistic set membership.
+    Zero false negatives. Configurable false positive rate.
+    Used by: Google Bigtable, Cassandra, Chrome SafeBrowsing.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, expected_items: <span class="bi">int</span>, fp_rate: <span class="bi">float</span> = <span class="nm">0.01</span>):
+        <span class="cm"># Optimal bit array size</span>
+        <span class="bi">self</span>.m = <span class="bi">int</span>(-expected_items * math.log(fp_rate) / (math.log(<span class="nm">2</span>)**<span class="nm">2</span>))
+        <span class="cm"># Optimal number of hash functions</span>
+        <span class="bi">self</span>.k = <span class="bi">int</span>(<span class="bi">self</span>.m / expected_items * math.log(<span class="nm">2</span>))
+        <span class="bi">self</span>.bits = bytearray(<span class="bi">self</span>.m)
+
+    <span class="kw">def</span> <span class="fn">_hashes</span>(<span class="bi">self</span>, item: <span class="bi">str</span>) -> list[<span class="bi">int</span>]:
+        <span class="st">"""Generate k hash positions using double hashing."""</span>
+        h1 = <span class="bi">int</span>(hashlib.md5(item.encode()).hexdigest(), <span class="nm">16</span>)
+        h2 = <span class="bi">int</span>(hashlib.sha256(item.encode()).hexdigest(), <span class="nm">16</span>)
+        <span class="kw">return</span> [(h1 + i * h2) % <span class="bi">self</span>.m <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="bi">self</span>.k)]
+
+    <span class="kw">def</span> <span class="fn">add</span>(<span class="bi">self</span>, item: <span class="bi">str</span>) -> <span class="kw">None</span>:
+        <span class="kw">for</span> pos <span class="kw">in</span> <span class="bi">self</span>._hashes(item):
+            <span class="bi">self</span>.bits[pos] = <span class="nm">1</span>
+
+    <span class="kw">def</span> <span class="fn">__contains__</span>(<span class="bi">self</span>, item: <span class="bi">str</span>) -> <span class="bi">bool</span>:
+        <span class="st">"""Returns True if item MIGHT be in set. Never false negatives."""</span>
+        <span class="kw">return</span> <span class="bi">all</span>(<span class="bi">self</span>.bits[pos] <span class="kw">for</span> pos <span class="kw">in</span> <span class="bi">self</span>._hashes(item))
+
+    <span class="kw">def</span> <span class="fn">estimated_fp_rate</span>(<span class="bi">self</span>, n_inserted: <span class="bi">int</span>) -> <span class="bi">float</span>:
+        <span class="st">"""Current false positive probability."""</span>
+        <span class="kw">return</span> (<span class="nm">1</span> - math.exp(-<span class="bi">self</span>.k * n_inserted / <span class="bi">self</span>.m)) ** <span class="bi">self</span>.k
+
+
+<span class="cm"># ── Demo: URL deduplication (Chrome SafeBrowsing) ──</span>
+bf = BloomFilter(expected_items=<span class="nm">1_000_000</span>, fp_rate=<span class="nm">0.001</span>)
+visited = [<span class="st">"google.com"</span>, <span class="st">"github.com"</span>, <span class="st">"openai.com"</span>]
+<span class="kw">for</span> url <span class="kw">in</span> visited: bf.add(url)
+
+<span class="bi">print</span>(<span class="st">"google.com"</span> <span class="kw">in</span> bf)    <span class="cm"># → True (definitely visited)</span>
+<span class="bi">print</span>(<span class="st">"unknown.io"</span> <span class="kw">in</span> bf)    <span class="cm"># → False (never visited)</span>
+<span class="bi">print</span>(<span class="st">f"Bit array size: </span>{<span class="bi">self</span>.m:,}<span class="st"> bits"</span>)  <span class="cm"># ~14MB for 1M items</span>`
+    }
+  ]
+},
+
+// ─── MERGESORT ───────────────────────────────────────────────────
+{
+  id: 'merge-sort',
+  name: 'Merge Sort',
+  category: 'sort',
+  icon: '🔀',
+  color: '#38bdf8',
+  companies: ['Google', 'Oracle', 'Salesforce', 'Git'],
+  description: 'Merge sort is a stable, O(n log n) divide-and-conquer sorting algorithm. It guarantees worst-case O(n log n) unlike Quicksort. Git uses it for diff computation; databases use it for external sorting of data too large for RAM.',
+  realWorld: 'Git\'s merge algorithm is based on a 3-way merge derived from merge sort principles. Oracle Database uses external merge sort to sort datasets larger than RAM. Python\'s built-in sort (Timsort) is a hybrid merge sort optimized for real-world data.',
+  complexity: [
+    { case: 'Best', time: 'O(n log n)', space: 'O(n)', note: 'Already sorted' },
+    { case: 'Average', time: 'O(n log n)', space: 'O(n)', note: 'Standard case' },
+    { case: 'Worst', time: 'O(n log n)', space: 'O(n)', note: 'Guaranteed' },
+  ],
+  tags: ['Divide & Conquer', 'Stable', 'Sorting', 'Guaranteed O(n log n)'],
+  impls: [
+    {
+      label: 'Classic',
+      filename: 'merge_sort.py',
+      code: `<span class="kw">def</span> <span class="fn">merge_sort</span>(arr: list) -> list:
+    <span class="st">"""
+    Stable O(n log n) sort. Guaranteed worst case.
+    Used by: Python's Timsort base, Git merge, DB external sort.
+    """</span>
+    <span class="kw">if</span> <span class="bi">len</span>(arr) <= <span class="nm">1</span>:
+        <span class="kw">return</span> arr
+
+    mid = <span class="bi">len</span>(arr) // <span class="nm">2</span>
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    <span class="kw">return</span> merge(left, right)
+
+
+<span class="kw">def</span> <span class="fn">merge</span>(left: list, right: list) -> list:
+    result = []
+    i = j = <span class="nm">0</span>
+    <span class="kw">while</span> i < <span class="bi">len</span>(left) <span class="kw">and</span> j < <span class="bi">len</span>(right):
+        <span class="kw">if</span> left[i] <= right[j]:
+            result.append(left[i]); i += <span class="nm">1</span>
+        <span class="kw">else</span>:
+            result.append(right[j]); j += <span class="nm">1</span>
+    <span class="kw">return</span> result + left[i:] + right[j:]
+
+
+<span class="kw">def</span> <span class="fn">count_inversions</span>(arr: list) -> <span class="bi">tuple</span>[list, <span class="bi">int</span>]:
+    <span class="st">"""
+    Modified merge sort counting inversions.
+    Used in: recommendation systems (ranking similarity).
+    An inversion = a[i] > a[j] where i < j.
+    """</span>
+    <span class="kw">if</span> <span class="bi">len</span>(arr) <= <span class="nm">1</span>:
+        <span class="kw">return</span> arr, <span class="nm">0</span>
+    mid = <span class="bi">len</span>(arr) // <span class="nm">2</span>
+    left, lc = count_inversions(arr[:mid])
+    right, rc = count_inversions(arr[mid:])
+    merged, mc = merge_count(left, right)
+    <span class="kw">return</span> merged, lc + rc + mc
+
+
+<span class="kw">def</span> <span class="fn">merge_count</span>(left, right):
+    result, inversions = [], <span class="nm">0</span>
+    i = j = <span class="nm">0</span>
+    <span class="kw">while</span> i < <span class="bi">len</span>(left) <span class="kw">and</span> j < <span class="bi">len</span>(right):
+        <span class="kw">if</span> left[i] <= right[j]:
+            result.append(left[i]); i += <span class="nm">1</span>
+        <span class="kw">else</span>:
+            inversions += <span class="bi">len</span>(left) - i  <span class="cm"># All remaining left > right[j]</span>
+            result.append(right[j]); j += <span class="nm">1</span>
+    <span class="kw">return</span> result + left[i:] + right[j:], inversions`
+    },
+    {
+      label: 'External Sort (Big Data)',
+      filename: 'external_sort.py',
+      code: `<span class="kw">import</span> heapq
+<span class="kw">import</span> tempfile, os
+
+<span class="kw">def</span> <span class="fn">external_merge_sort</span>(data: list, chunk_size: <span class="bi">int</span> = <span class="nm">1000</span>) -> list:
+    <span class="st">"""
+    External merge sort for data larger than RAM.
+    Used by: Oracle DB, MapReduce (Google), Spark SQL sort.
+    Sorts chunks in memory, merges sorted files on disk.
+    """</span>
+    <span class="cm"># Phase 1: Create sorted runs</span>
+    runs = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">0</span>, <span class="bi">len</span>(data), chunk_size):
+        chunk = sorted(data[i:i + chunk_size])
+        runs.append(chunk)
+
+    <span class="cm"># Phase 2: K-way merge using a min-heap</span>
+    heap = []
+    iterators = [<span class="bi">iter</span>(run) <span class="kw">for</span> run <span class="kw">in</span> runs]
+
+    <span class="kw">for</span> i, it <span class="kw">in</span> <span class="bi">enumerate</span>(iterators):
+        val = <span class="bi">next</span>(it, <span class="kw">None</span>)
+        <span class="kw">if</span> val <span class="kw">is not</span> <span class="kw">None</span>:
+            heapq.heappush(heap, (val, i))
+
+    result = []
+    <span class="kw">while</span> heap:
+        val, i = heapq.heappop(heap)
+        result.append(val)
+        nxt = <span class="bi">next</span>(iterators[i], <span class="kw">None</span>)
+        <span class="kw">if</span> nxt <span class="kw">is not</span> <span class="kw">None</span>:
+            heapq.heappush(heap, (nxt, i))
+
+    <span class="kw">return</span> result`
+    }
+  ]
+},
+
+// ─── KMP STRING SEARCH ──────────────────────────────────────────
+{
+  id: 'kmp',
+  name: 'KMP String Search',
+  category: 'string',
+  icon: '📝',
+  color: '#e879f9',
+  companies: ['Cloudflare WAF', 'Elasticsearch', 'Grep/Unix', 'IDEs'],
+  description: 'Knuth-Morris-Pratt (KMP) finds all occurrences of a pattern in text in O(n+m) time by precomputing a "failure function" that avoids redundant comparisons. It powers intrusion detection, text editors, search engines, and firewalls.',
+  realWorld: 'Cloudflare\'s WAF uses KMP-variant multi-pattern matching to scan 50M+ HTTP requests per second for attack signatures. Elasticsearch uses KMP for exact-phrase matching in its inverted index. GNU grep uses optimized string search for 1B+ lines/sec throughput.',
+  complexity: [
+    { case: 'Preprocessing', time: 'O(m)', space: 'O(m)', note: 'm = pattern length' },
+    { case: 'Search', time: 'O(n)', space: 'O(m)', note: 'n = text length' },
+    { case: 'Total', time: 'O(n+m)', space: 'O(m)', note: 'Linear! vs O(nm) naive' },
+  ],
+  tags: ['String', 'Pattern Matching', 'Linear Time', 'Failure Function'],
+  impls: [
+    {
+      label: 'Classic KMP',
+      filename: 'kmp.py',
+      code: `<span class="kw">def</span> <span class="fn">build_lps</span>(pattern: <span class="bi">str</span>) -> list[<span class="bi">int</span>]:
+    <span class="st">"""
+    Build Longest Proper Prefix-Suffix (LPS) array.
+    lps[i] = length of longest prefix of pattern[0..i]
+             that is also a suffix.
+    """</span>
+    m = <span class="bi">len</span>(pattern)
+    lps = [<span class="nm">0</span>] * m
+    length = <span class="nm">0</span>  <span class="cm"># Length of previous longest PS</span>
+    i = <span class="nm">1</span>
+
+    <span class="kw">while</span> i < m:
+        <span class="kw">if</span> pattern[i] == pattern[length]:
+            length += <span class="nm">1</span>
+            lps[i] = length
+            i += <span class="nm">1</span>
+        <span class="kw">elif</span> length != <span class="nm">0</span>:
+            length = lps[length - <span class="nm">1</span>]  <span class="cm"># Don't increment i</span>
+        <span class="kw">else</span>:
+            lps[i] = <span class="nm">0</span>
+            i += <span class="nm">1</span>
+    <span class="kw">return</span> lps
+
+
+<span class="kw">def</span> <span class="fn">kmp_search</span>(text: <span class="bi">str</span>, pattern: <span class="bi">str</span>) -> list[<span class="bi">int</span>]:
+    <span class="st">"""
+    KMP string search. Returns all start indices of pattern in text.
+    Time: O(n+m) | Space: O(m)
+    """</span>
+    n, m = <span class="bi">len</span>(text), <span class="bi">len</span>(pattern)
+    <span class="kw">if</span> m == <span class="nm">0</span>: <span class="kw">return</span> []
+
+    lps = build_lps(pattern)
+    matches = []
+    i = j = <span class="nm">0</span>
+
+    <span class="kw">while</span> i < n:
+        <span class="kw">if</span> text[i] == pattern[j]:
+            i += <span class="nm">1</span>; j += <span class="nm">1</span>
+        <span class="kw">if</span> j == m:
+            matches.append(i - j)
+            j = lps[j - <span class="nm">1</span>]
+        <span class="kw">elif</span> i < n <span class="kw">and</span> text[i] != pattern[j]:
+            <span class="kw">if</span> j != <span class="nm">0</span>: j = lps[j - <span class="nm">1</span>]
+            <span class="kw">else</span>: i += <span class="nm">1</span>
+
+    <span class="kw">return</span> matches
+
+
+<span class="cm"># ── Example: Firewall rule matching ────────────────</span>
+log = <span class="st">"GET /api/users?id=1 OR 1=1--"</span>
+sqli_pattern = <span class="st">"OR 1=1"</span>
+positions = kmp_search(log, sqli_pattern)
+<span class="bi">print</span>(<span class="st">f"SQLi detected at positions: </span>{positions}<span class="st">"</span>)`
+    },
+    {
+      label: 'Aho-Corasick (Multi-Pattern)',
+      filename: 'aho_corasick.py',
+      code: `<span class="kw">from</span> collections <span class="kw">import</span> deque, defaultdict
+
+<span class="kw">class</span> <span class="dc">AhoCorasick</span>:
+    <span class="st">"""
+    Simultaneous multi-pattern string matching.
+    Used by: Cloudflare WAF, antivirus, intrusion detection.
+    Matches ALL patterns in O(n + m + z) where z = matches.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>):
+        <span class="bi">self</span>.goto = [{}]  <span class="cm"># Trie transitions</span>
+        <span class="bi">self</span>.fail = [<span class="nm">0</span>]   <span class="cm"># Failure links</span>
+        <span class="bi">self</span>.output = [[]]  <span class="cm"># Patterns ending at each state</span>
+
+    <span class="kw">def</span> <span class="fn">build</span>(<span class="bi">self</span>, patterns: list[<span class="bi">str</span>]) -> <span class="kw">None</span>:
+        <span class="cm"># Build trie</span>
+        <span class="kw">for</span> pattern <span class="kw">in</span> patterns:
+            state = <span class="nm">0</span>
+            <span class="kw">for</span> char <span class="kw">in</span> pattern:
+                <span class="kw">if</span> char <span class="kw">not in</span> <span class="bi">self</span>.goto[state]:
+                    <span class="bi">self</span>.goto[state][char] = <span class="bi">len</span>(<span class="bi">self</span>.goto)
+                    <span class="bi">self</span>.goto.append({})
+                    <span class="bi">self</span>.fail.append(<span class="nm">0</span>)
+                    <span class="bi">self</span>.output.append([])
+                state = <span class="bi">self</span>.goto[state][char]
+            <span class="bi">self</span>.output[state].append(pattern)
+
+        <span class="cm"># Build failure links via BFS</span>
+        q = deque()
+        <span class="kw">for</span> c, s <span class="kw">in</span> <span class="bi">self</span>.goto[<span class="nm">0</span>].items():
+            q.append(s)
+        <span class="kw">while</span> q:
+            r = q.popleft()
+            <span class="kw">for</span> c, s <span class="kw">in</span> <span class="bi">self</span>.goto[r].items():
+                fail = <span class="bi">self</span>.fail[r]
+                <span class="kw">while</span> fail <span class="kw">and</span> c <span class="kw">not in</span> <span class="bi">self</span>.goto[fail]:
+                    fail = <span class="bi">self</span>.fail[fail]
+                <span class="bi">self</span>.fail[s] = <span class="bi">self</span>.goto[fail].get(c, <span class="nm">0</span>)
+                <span class="bi">self</span>.output[s] += <span class="bi">self</span>.output[<span class="bi">self</span>.fail[s]]
+                q.append(s)
+
+    <span class="kw">def</span> <span class="fn">search</span>(<span class="bi">self</span>, text: <span class="bi">str</span>) -> list:
+        state, results = <span class="nm">0</span>, []
+        <span class="kw">for</span> i, c <span class="kw">in</span> <span class="bi">enumerate</span>(text):
+            <span class="kw">while</span> state <span class="kw">and</span> c <span class="kw">not in</span> <span class="bi">self</span>.goto[state]:
+                state = <span class="bi">self</span>.fail[state]
+            state = <span class="bi">self</span>.goto[state].get(c, <span class="nm">0</span>)
+            <span class="kw">for</span> pattern <span class="kw">in</span> <span class="bi">self</span>.output[state]:
+                results.append((i - <span class="bi">len</span>(pattern) + <span class="nm">1</span>, pattern))
+        <span class="kw">return</span> results`
+    }
+  ]
+},
+
+// ─── COLLABORATIVE FILTERING ─────────────────────────────────────
+{
+  id: 'collaborative-filtering',
+  name: 'Collaborative Filtering',
+  category: 'ml',
+  icon: '🎯',
+  color: '#f59e0b',
+  companies: ['Netflix', 'Spotify', 'Amazon', 'YouTube'],
+  description: 'Collaborative filtering predicts user preferences based on similarity to other users or items. Matrix factorization variants (SVD, ALS) discover latent features and power the recommendation engines responsible for 35% of Amazon\'s revenue and 80% of Netflix streams.',
+  realWorld: 'Netflix\'s recommendation engine (worth ~$1B/year in retention) uses a blend of collaborative filtering with neural networks. Spotify\'s "Discover Weekly" uses item-item collaborative filtering on 400M+ user-song interactions. Amazon\'s CF drives 35% of all purchases.',
+  complexity: [
+    { case: 'User-User CF', time: 'O(u²i)', space: 'O(u²)', note: 'u=users, i=items' },
+    { case: 'Item-Item CF', time: 'O(i²u)', space: 'O(i²)', note: 'Precomputed' },
+    { case: 'Matrix Factor.', time: 'O(k·r)', space: 'O(k(u+i))', note: 'k=latent dims' },
+  ],
+  tags: ['Recommender System', 'Matrix Factorization', 'Cosine Similarity', 'ML'],
+  impls: [
+    {
+      label: 'User-User CF',
+      filename: 'user_cf.py',
+      code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+
+<span class="kw">def</span> <span class="fn">user_collaborative_filter</span>(
+    ratings: np.ndarray,  <span class="cm"># shape: (users, items)</span>
+    user_id: <span class="bi">int</span>,
+    top_k: <span class="bi">int</span> = <span class="nm">5</span>
+) -> list[<span class="bi">int</span>]:
+    <span class="st">"""
+    User-User Collaborative Filtering.
+    Find similar users → recommend items they liked.
+    Used by: Netflix, Spotify, MovieLens.
+    """</span>
+    <span class="cm"># Compute cosine similarity between all users</span>
+    sim_matrix = cosine_similarity(ratings)
+
+    <span class="cm"># Get similarity scores for target user (exclude self)</span>
+    user_sims = sim_matrix[user_id].copy()
+    user_sims[user_id] = <span class="nm">0</span>
+
+    <span class="cm"># Weighted sum of ratings from similar users</span>
+    weighted_ratings = user_sims @ ratings
+    already_rated = ratings[user_id] > <span class="nm">0</span>
+
+    <span class="cm"># Exclude items user already rated</span>
+    scores = np.where(already_rated, <span class="nm">-np</span>.inf, weighted_ratings)
+
+    <span class="kw">return</span> np.argsort(scores)[::-<span class="nm">1</span>][:top_k].tolist()
+
+
+<span class="cm"># ── Demo ────────────────────────────────────────────</span>
+<span class="cm"># Rows=users, Cols=movies, Values=ratings (0=unrated)</span>
+ratings = np.array([
+    [<span class="nm">5</span>, <span class="nm">3</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>],   <span class="cm"># User 0</span>
+    [<span class="nm">4</span>, <span class="nm">0</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">2</span>],   <span class="cm"># User 1</span>
+    [<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">5</span>, <span class="nm">0</span>],   <span class="cm"># User 2</span>
+    [<span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">4</span>, <span class="nm">4</span>, <span class="nm">0</span>],   <span class="cm"># User 3</span>
+], dtype=<span class="bi">float</span>)
+
+recs = user_collaborative_filter(ratings, user_id=<span class="nm">0</span>, top_k=<span class="nm">3</span>)
+<span class="bi">print</span>(<span class="st">f"Recommended movies for User 0: </span>{recs}<span class="st">"</span>)`
+    },
+    {
+      label: 'SVD Matrix Factorization',
+      filename: 'svd_recommender.py',
+      code: `<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">class</span> <span class="dc">SVDRecommender</span>:
+    <span class="st">"""
+    Matrix Factorization via SVD — Netflix Prize winning approach.
+    Learns latent user/item factors to fill missing ratings.
+    R ≈ U × Σ × V^T (k latent dimensions)
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, n_factors: <span class="bi">int</span> = <span class="nm">20</span>, lr: <span class="bi">float</span> = <span class="nm">0.01</span>, reg: <span class="bi">float</span> = <span class="nm">0.1</span>):
+        <span class="bi">self</span>.k = n_factors
+        <span class="bi">self</span>.lr = lr
+        <span class="bi">self</span>.reg = reg
+
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="bi">self</span>, R: np.ndarray, epochs: <span class="bi">int</span> = <span class="nm">50</span>) -> <span class="st">'SVDRecommender'</span>:
+        n_users, n_items = R.shape
+        <span class="bi">self</span>.U = np.random.normal(<span class="nm">0</span>, <span class="nm">0.1</span>, (n_users, <span class="bi">self</span>.k))
+        <span class="bi">self</span>.V = np.random.normal(<span class="nm">0</span>, <span class="nm">0.1</span>, (n_items, <span class="bi">self</span>.k))
+        <span class="bi">self</span>.bu = np.zeros(n_users)  <span class="cm"># User bias</span>
+        <span class="bi">self</span>.bv = np.zeros(n_items)  <span class="cm"># Item bias</span>
+        <span class="bi">self</span>.mu = R[R > <span class="nm">0</span>].mean()   <span class="cm"># Global mean</span>
+
+        known = np.argwhere(R > <span class="nm">0</span>)
+
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(epochs):
+            np.random.shuffle(known)
+            <span class="kw">for</span> u, i <span class="kw">in</span> known:
+                pred = <span class="bi">self</span>.mu + <span class="bi">self</span>.bu[u] + <span class="bi">self</span>.bv[i] + <span class="bi">self</span>.U[u] @ <span class="bi">self</span>.V[i]
+                err = R[u, i] - pred
+                <span class="bi">self</span>.bu[u] += <span class="bi">self</span>.lr * (err - <span class="bi">self</span>.reg * <span class="bi">self</span>.bu[u])
+                <span class="bi">self</span>.bv[i] += <span class="bi">self</span>.lr * (err - <span class="bi">self</span>.reg * <span class="bi">self</span>.bv[i])
+                <span class="bi">self</span>.U[u] += <span class="bi">self</span>.lr * (err * <span class="bi">self</span>.V[i] - <span class="bi">self</span>.reg * <span class="bi">self</span>.U[u])
+                <span class="bi">self</span>.V[i] += <span class="bi">self</span>.lr * (err * <span class="bi">self</span>.U[u] - <span class="bi">self</span>.reg * <span class="bi">self</span>.V[i])
+        <span class="kw">return</span> <span class="bi">self</span>
+
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="bi">self</span>, u: <span class="bi">int</span>, i: <span class="bi">int</span>) -> <span class="bi">float</span>:
+        <span class="kw">return</span> <span class="nm">float</span>(np.clip(
+            <span class="bi">self</span>.mu + <span class="bi">self</span>.bu[u] + <span class="bi">self</span>.bv[i] + <span class="bi">self</span>.U[u] @ <span class="bi">self</span>.V[i],
+            <span class="nm">1</span>, <span class="nm">5</span>
+        ))`
+    }
+  ]
+},
+
+// ─── TRIE ────────────────────────────────────────────────────────
+{
+  id: 'trie',
+  name: 'Trie (Prefix Tree)',
+  category: 'tree',
+  icon: '🌲',
+  color: '#84cc16',
+  companies: ['Google Search', 'Autocomplete', 'Spell Check', 'DNS'],
+  description: 'A trie stores strings in a tree where each node represents a character prefix. It enables O(m) lookups, prefix search, and autocomplete with optimal space sharing. Google processes 8.5B searches/day largely enabled by trie-based autocomplete.',
+  realWorld: 'Google\'s search autocomplete serves suggestions within 100ms for 8.5B daily queries using trie + DAWG structures. DNS resolvers use trie-like structures for domain lookups. Compilers use tries for symbol tables. Spell checkers use tries for dictionary lookups.',
+  complexity: [
+    { case: 'Insert', time: 'O(m)', space: 'O(m)', note: 'm = word length' },
+    { case: 'Search', time: 'O(m)', space: 'O(1)', note: 'Exact match' },
+    { case: 'Prefix Search', time: 'O(m + k)', space: 'O(k)', note: 'k = results' },
+  ],
+  tags: ['Tree', 'String', 'Prefix', 'Autocomplete'],
+  impls: [
+    {
+      label: 'Classic Trie',
+      filename: 'trie.py',
+      code: `<span class="kw">class</span> <span class="dc">TrieNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>):
+        <span class="bi">self</span>.children: dict[<span class="bi">str</span>, <span class="st">'TrieNode'</span>] = {}
+        <span class="bi">self</span>.is_end = <span class="kw">False</span>
+        <span class="bi">self</span>.count = <span class="nm">0</span>  <span class="cm"># Frequency for ranking</span>
+
+
+<span class="kw">class</span> <span class="dc">Trie</span>:
+    <span class="st">"""
+    Prefix tree for O(m) insert, search, prefix queries.
+    Used by: Google Autocomplete, DNS, Spell Check, Compilers.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>):
+        <span class="bi">self</span>.root = TrieNode()
+
+    <span class="kw">def</span> <span class="fn">insert</span>(<span class="bi">self</span>, word: <span class="bi">str</span>, count: <span class="bi">int</span> = <span class="nm">1</span>) -> <span class="kw">None</span>:
+        node = <span class="bi">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> word:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.is_end = <span class="kw">True</span>
+        node.count += count
+
+    <span class="kw">def</span> <span class="fn">search</span>(<span class="bi">self</span>, word: <span class="bi">str</span>) -> <span class="bi">bool</span>:
+        node = <span class="bi">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> word:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return</span> <span class="kw">False</span>
+            node = node.children[ch]
+        <span class="kw">return</span> node.is_end
+
+    <span class="kw">def</span> <span class="fn">starts_with</span>(<span class="bi">self</span>, prefix: <span class="bi">str</span>) -> <span class="bi">bool</span>:
+        node = <span class="bi">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> prefix:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return</span> <span class="kw">False</span>
+            node = node.children[ch]
+        <span class="kw">return</span> <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">autocomplete</span>(<span class="bi">self</span>, prefix: <span class="bi">str</span>, top_k: <span class="bi">int</span> = <span class="nm">5</span>) -> list[<span class="bi">str</span>]:
+        <span class="st">"""Return top-k completions sorted by frequency."""</span>
+        node = <span class="bi">self</span>.root
+        <span class="kw">for</span> ch <span class="kw">in</span> prefix:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children: <span class="kw">return</span> []
+            node = node.children[ch]
+
+        results = []
+        <span class="bi">self</span>._dfs(node, prefix, results)
+        results.sort(key=<span class="kw">lambda</span> x: -x[<span class="nm">1</span>])
+        <span class="kw">return</span> [word <span class="kw">for</span> word, _ <span class="kw">in</span> results[:top_k]]
+
+    <span class="kw">def</span> <span class="fn">_dfs</span>(<span class="bi">self</span>, node, path, results):
+        <span class="kw">if</span> node.is_end:
+            results.append((path, node.count))
+        <span class="kw">for</span> ch, child <span class="kw">in</span> node.children.items():
+            <span class="bi">self</span>._dfs(child, path + ch, results)
+
+
+<span class="cm"># ── Demo: Search autocomplete ───────────────────────</span>
+t = Trie()
+queries = [(<span class="st">"apple"</span>, <span class="nm">100</span>), (<span class="st">"app"</span>, <span class="nm">80</span>), (<span class="st">"application"</span>, <span class="nm">60</span>), (<span class="st">"apply"</span>, <span class="nm">40</span>)]
+<span class="kw">for</span> word, cnt <span class="kw">in</span> queries: t.insert(word, cnt)
+
+<span class="bi">print</span>(t.autocomplete(<span class="st">"app"</span>))  <span class="cm"># → ['apple', 'app', 'application', 'apply']</span>`
+    }
+  ]
+},
+
+// ─── RAFT CONSENSUS ──────────────────────────────────────────────
+{
+  id: 'raft',
+  name: 'Raft Consensus Algorithm',
+  category: 'distributed',
+  icon: '⚓',
+  color: '#34d399',
+  companies: ['etcd/Kubernetes', 'CockroachDB', 'TiKV', 'Consul'],
+  description: 'Raft is a consensus algorithm for replicated state machines that is more understandable than Paxos. It elects a leader who manages log replication to a quorum of followers. It is the foundation of Kubernetes\' etcd, powering millions of production clusters.',
+  realWorld: 'etcd (powered by Raft) manages Kubernetes cluster state for millions of production deployments including Google GKE. CockroachDB uses Raft per shard for ACID distributed transactions. HashiCorp Consul uses Raft for service mesh coordination.',
+  complexity: [
+    { case: 'Leader Election', time: 'O(n)', space: 'O(n)', note: 'n = cluster nodes' },
+    { case: 'Log Replication', time: 'O(n)', space: 'O(log size)', note: 'Per commit' },
+    { case: 'Fault Tolerance', time: 'O(1)', space: 'O(n)', note: 'Up to ⌊n/2⌋ failures' },
+  ],
+  tags: ['Consensus', 'Distributed', 'Leader Election', 'Fault Tolerant'],
+  impls: [
+    {
+      label: 'Simplified Raft',
+      filename: 'raft_simplified.py',
+      code: `<span class="kw">import</span> random, time
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="kw">class</span> <span class="dc">Role</span>(Enum):
+    FOLLOWER = <span class="st">"follower"</span>
+    CANDIDATE = <span class="st">"candidate"</span>
+    LEADER = <span class="st">"leader"</span>
+
+<span class="op">@dataclass</span>
+<span class="kw">class</span> <span class="dc">LogEntry</span>:
+    term: <span class="bi">int</span>
+    command: <span class="bi">str</span>
+
+<span class="kw">class</span> <span class="dc">RaftNode</span>:
+    <span class="st">"""
+    Simplified Raft consensus implementation.
+    Real: etcd, CockroachDB, TiKV, Consul, YugabyteDB.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, node_id: <span class="bi">str</span>, peers: list[<span class="bi">str</span>]):
+        <span class="bi">self</span>.id = node_id
+        <span class="bi">self</span>.peers = peers
+        <span class="bi">self</span>.role = Role.FOLLOWER
+
+        <span class="cm"># Persistent state</span>
+        <span class="bi">self</span>.current_term = <span class="nm">0</span>
+        <span class="bi">self</span>.voted_for: str | <span class="kw">None</span> = <span class="kw">None</span>
+        <span class="bi">self</span>.log: list[LogEntry] = []
+
+        <span class="cm"># Volatile state</span>
+        <span class="bi">self</span>.commit_index = <span class="nm">0</span>
+        <span class="bi">self</span>.last_applied = <span class="nm">0</span>
+        <span class="bi">self</span>.leader_id: str | <span class="kw">None</span> = <span class="kw">None</span>
+
+        <span class="cm"># Timeout: 150–300ms (randomized to prevent split votes)</span>
+        <span class="bi">self</span>.election_timeout = random.uniform(<span class="nm">0.15</span>, <span class="nm">0.30</span>)
+
+    <span class="kw">def</span> <span class="fn">request_vote</span>(<span class="bi">self</span>, term: <span class="bi">int</span>, candidate_id: <span class="bi">str</span>,
+                     last_log_idx: <span class="bi">int</span>, last_log_term: <span class="bi">int</span>) -> dict:
+        <span class="st">"""Vote RPC handler — core of leader election."""</span>
+        <span class="kw">if</span> term < <span class="bi">self</span>.current_term:
+            <span class="kw">return</span> {<span class="st">"term"</span>: <span class="bi">self</span>.current_term, <span class="st">"granted"</span>: <span class="kw">False</span>}
+
+        <span class="kw">if</span> term > <span class="bi">self</span>.current_term:
+            <span class="bi">self</span>.current_term = term
+            <span class="bi">self</span>.role = Role.FOLLOWER
+            <span class="bi">self</span>.voted_for = <span class="kw">None</span>
+
+        my_last_term = <span class="bi">self</span>.log[-<span class="nm">1</span>].term <span class="kw">if</span> <span class="bi">self</span>.log <span class="kw">else</span> <span class="nm">0</span>
+        log_ok = (last_log_term > my_last_term or
+                  (last_log_term == my_last_term and
+                   last_log_idx >= <span class="bi">len</span>(<span class="bi">self</span>.log) - <span class="nm">1</span>))
+
+        vote = (<span class="bi">self</span>.voted_for <span class="kw">is</span> <span class="kw">None</span> or
+                <span class="bi">self</span>.voted_for == candidate_id) <span class="kw">and</span> log_ok
+
+        <span class="kw">if</span> vote: <span class="bi">self</span>.voted_for = candidate_id
+        <span class="kw">return</span> {<span class="st">"term"</span>: <span class="bi">self</span>.current_term, <span class="st">"granted"</span>: vote}
+
+    <span class="kw">def</span> <span class="fn">append_entries</span>(<span class="bi">self</span>, term, leader_id, prev_idx,
+                        prev_term, entries, commit_idx) -> dict:
+        <span class="st">"""AppendEntries RPC — log replication and heartbeat."""</span>
+        <span class="kw">if</span> term < <span class="bi">self</span>.current_term:
+            <span class="kw">return</span> {<span class="st">"term"</span>: <span class="bi">self</span>.current_term, <span class="st">"success"</span>: <span class="kw">False</span>}
+
+        <span class="bi">self</span>.role = Role.FOLLOWER
+        <span class="bi">self</span>.current_term = term
+        <span class="bi">self</span>.leader_id = leader_id
+
+        <span class="kw">if</span> entries:
+            <span class="bi">self</span>.log = <span class="bi">self</span>.log[:prev_idx + <span class="nm">1</span>] + [LogEntry(**e) <span class="kw">for</span> e <span class="kw">in</span> entries]
+
+        <span class="bi">self</span>.commit_index = <span class="bi">min</span>(commit_idx, <span class="bi">len</span>(<span class="bi">self</span>.log) - <span class="nm">1</span>)
+        <span class="kw">return</span> {<span class="st">"term"</span>: <span class="bi">self</span>.current_term, <span class="st">"success"</span>: <span class="kw">True</span>}`
+    }
+  ]
+},
+
+// ─── QUICKSORT ───────────────────────────────────────────────────
+{
+  id: 'quicksort',
+  name: 'Quicksort',
+  category: 'sort',
+  icon: '⚡',
+  color: '#38bdf8',
+  companies: ['C stdlib', 'Java Arrays', 'Linux Kernel', 'V8 Engine'],
+  description: 'Quicksort is the fastest general-purpose sorting algorithm in practice due to excellent cache performance. It\'s the default sort in C\'s stdlib, Java\'s primitive arrays, and V8 JavaScript engine. 3-way partitioning handles duplicates optimally.',
+  realWorld: 'C\'s qsort() (used in Linux kernel) is a hybrid Quicksort. V8 (Chrome/Node.js) uses Timsort/Quicksort hybrid for Array.sort(). Java uses dual-pivot Quicksort for primitive arrays achieving 15-20% speedup over classic Quicksort.',
+  complexity: [
+    { case: 'Best', time: 'O(n log n)', space: 'O(log n)', note: 'Balanced partitions' },
+    { case: 'Average', time: 'O(n log n)', space: 'O(log n)', note: 'Random pivots' },
+    { case: 'Worst', time: 'O(n²)', space: 'O(n)', note: 'Already sorted' },
+  ],
+  tags: ['Divide & Conquer', 'In-place', 'Cache Friendly', 'Practical'],
+  impls: [
+    {
+      label: 'Lomuto Partition',
+      filename: 'quicksort_lomuto.py',
+      code: `<span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">quicksort</span>(arr: list, low: <span class="bi">int</span> = <span class="nm">0</span>, high: <span class="bi">int</span> = <span class="kw">None</span>) -> <span class="kw">None</span>:
+    <span class="st">"""
+    In-place Quicksort (Lomuto partition).
+    Randomized pivot prevents O(n²) worst case.
+    """</span>
+    <span class="kw">if</span> high <span class="kw">is</span> <span class="kw">None</span>: high = <span class="bi">len</span>(arr) - <span class="nm">1</span>
+    <span class="kw">if</span> low < high:
+        pivot_idx = partition(arr, low, high)
+        quicksort(arr, low, pivot_idx - <span class="nm">1</span>)
+        quicksort(arr, pivot_idx + <span class="nm">1</span>, high)
+
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr: list, low: <span class="bi">int</span>, high: <span class="bi">int</span>) -> <span class="bi">int</span>:
+    <span class="cm"># Randomize pivot to avoid O(n²) on sorted input</span>
+    rand_idx = random.randint(low, high)
+    arr[rand_idx], arr[high] = arr[high], arr[rand_idx]
+    pivot = arr[high]
+    i = low - <span class="nm">1</span>
+
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="bi">range</span>(low, high):
+        <span class="kw">if</span> arr[j] <= pivot:
+            i += <span class="nm">1</span>
+            arr[i], arr[j] = arr[j], arr[i]
+
+    arr[i + <span class="nm">1</span>], arr[high] = arr[high], arr[i + <span class="nm">1</span>]
+    <span class="kw">return</span> i + <span class="nm">1</span>
+
+
+<span class="kw">def</span> <span class="fn">three_way_quicksort</span>(arr: list, lo: <span class="bi">int</span> = <span class="nm">0</span>, hi: <span class="bi">int</span> = <span class="kw">None</span>) -> <span class="kw">None</span>:
+    <span class="st">"""
+    3-way partition (Dutch National Flag).
+    Optimal for arrays with many duplicates.
+    Used in: Java dual-pivot sort, NumPy, Pandas sort.
+    """</span>
+    <span class="kw">if</span> hi <span class="kw">is</span> <span class="kw">None</span>: hi = <span class="bi">len</span>(arr) - <span class="nm">1</span>
+    <span class="kw">if</span> lo >= hi: <span class="kw">return</span>
+
+    pivot = arr[lo]
+    lt, gt, i = lo, hi, lo + <span class="nm">1</span>
+
+    <span class="kw">while</span> i <= gt:
+        <span class="kw">if</span> arr[i] < pivot:
+            arr[lt], arr[i] = arr[i], arr[lt]
+            lt += <span class="nm">1</span>; i += <span class="nm">1</span>
+        <span class="kw">elif</span> arr[i] > pivot:
+            arr[gt], arr[i] = arr[i], arr[gt]
+            gt -= <span class="nm">1</span>
+        <span class="kw">else</span>:
+            i += <span class="nm">1</span>
+
+    three_way_quicksort(arr, lo, lt - <span class="nm">1</span>)
+    three_way_quicksort(arr, gt + <span class="nm">1</span>, hi)`
+    }
+  ]
+},
+
+// ─── SHA256 / HASHING ────────────────────────────────────────────
+{
+  id: 'sha256',
+  name: 'Cryptographic Hashing (SHA-256)',
+  category: 'crypto',
+  icon: '🔐',
+  color: '#fbbf24',
+  companies: ['Bitcoin', 'Git', 'SSL/TLS', 'AWS S3'],
+  description: 'SHA-256 produces a deterministic 256-bit digest with avalanche effect — any input change flips ~50% of output bits. It\'s the backbone of Bitcoin mining (proof of work), Git commit IDs, TLS certificate fingerprinting, and AWS S3 data integrity verification.',
+  realWorld: 'Bitcoin miners perform ~500 quintillion SHA-256 hashes per second to earn block rewards. Git uses SHA-1/SHA-256 to uniquely identify every commit, tree, and blob — making the entire repository history tamper-evident. AWS S3 uses SHA-256 for ETag data integrity.',
+  complexity: [
+    { case: 'Hash', time: 'O(n)', space: 'O(1)', note: 'n = input bytes' },
+    { case: 'Verify', time: 'O(n)', space: 'O(1)', note: 'Constant output size' },
+    { case: 'Mining', time: 'O(2^256/diff)', space: 'O(1)', note: 'Brute force' },
+  ],
+  tags: ['Cryptography', 'Hash', 'Bitcoin', 'Integrity'],
+  impls: [
+    {
+      label: 'Python hashlib',
+      filename: 'sha256_usage.py',
+      code: `<span class="kw">import</span> hashlib
+<span class="kw">import</span> hmac
+<span class="kw">import</span> secrets
+
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: <span class="bi">str</span>, salt: bytes = <span class="kw">None</span>) -> <span class="bi">tuple</span>[<span class="bi">str</span>, <span class="bi">str</span>]:
+    <span class="st">"""
+    Secure password hashing with salt.
+    Production: use bcrypt/argon2 instead of raw SHA-256.
+    """</span>
+    <span class="kw">if</span> salt <span class="kw">is</span> <span class="kw">None</span>:
+        salt = secrets.token_bytes(<span class="nm">32</span>)
+    key = hashlib.pbkdf2_hmac(<span class="st">'sha256'</span>, password.encode(), salt, <span class="nm">100_000</span>)
+    <span class="kw">return</span> key.hex(), salt.hex()
+
+
+<span class="kw">def</span> <span class="fn">merkle_root</span>(transactions: list[<span class="bi">str</span>]) -> <span class="bi">str</span>:
+    <span class="st">"""
+    Bitcoin-style Merkle tree root computation.
+    Allows efficient SPV proof: O(log n) verification.
+    """</span>
+    <span class="kw">def</span> <span class="fn">h</span>(data: <span class="bi">str</span>) -> <span class="bi">str</span>:
+        <span class="kw">return</span> hashlib.sha256(data.encode()).hexdigest()
+
+    layer = [h(tx) <span class="kw">for</span> tx <span class="kw">in</span> transactions]
+
+    <span class="kw">while</span> <span class="bi">len</span>(layer) > <span class="nm">1</span>:
+        <span class="kw">if</span> <span class="bi">len</span>(layer) % <span class="nm">2</span> == <span class="nm">1</span>:
+            layer.append(layer[-<span class="nm">1</span>])  <span class="cm"># Duplicate last if odd</span>
+        layer = [h(layer[i] + layer[i+<span class="nm">1</span>]) <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">0</span>, <span class="bi">len</span>(layer), <span class="nm">2</span>)]
+
+    <span class="kw">return</span> layer[<span class="nm">0</span>]
+
+
+<span class="kw">def</span> <span class="fn">simple_proof_of_work</span>(data: <span class="bi">str</span>, difficulty: <span class="bi">int</span> = <span class="nm">4</span>) -> <span class="bi">tuple</span>[<span class="bi">int</span>, <span class="bi">str</span>]:
+    <span class="st">"""
+    Bitcoin-style PoW: find nonce where hash starts with N zeros.
+    Real Bitcoin difficulty: ~19 leading zeros.
+    """</span>
+    prefix = <span class="st">'0'</span> * difficulty
+    nonce = <span class="nm">0</span>
+    <span class="kw">while</span> <span class="kw">True</span>:
+        text = <span class="st">f"</span>{data}<span class="st">:</span>{nonce}<span class="st">"</span>
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        <span class="kw">if</span> digest.startswith(prefix):
+            <span class="kw">return</span> nonce, digest
+        nonce += <span class="nm">1</span>
+
+<span class="cm"># nonce, hash = simple_proof_of_work("block_data", difficulty=4)</span>`
+    }
+  ]
+},
+
+// ─── UNION-FIND ──────────────────────────────────────────────────
+{
+  id: 'union-find',
+  name: 'Union-Find (Disjoint Sets)',
+  category: 'graph',
+  icon: '🔗',
+  color: '#a78bfa',
+  companies: ['Kruskal MST', 'Percolation', 'Social Networks', 'Compilers'],
+  description: 'Union-Find (DSU) tracks connected components with near-O(1) union and find operations via path compression and union by rank. It\'s used in Kruskal\'s MST (network design), cycle detection, image segmentation, and determining network connectivity.',
+  realWorld: 'Kruskal\'s algorithm uses DSU to build minimum spanning trees for network design saving millions in cable infrastructure. Social networks use it to find connected user communities. Compilers use DSU for register allocation and dead code elimination.',
+  complexity: [
+    { case: 'Find', time: 'O(α(n))', space: 'O(n)', note: 'Inverse Ackermann ≈ O(1)' },
+    { case: 'Union', time: 'O(α(n))', space: 'O(n)', note: 'With path compress' },
+    { case: 'N operations', time: 'O(n·α(n))', space: 'O(n)', note: 'Practically linear' },
+  ],
+  tags: ['Graph', 'Union-Find', 'Path Compression', 'Component'],
+  impls: [
+    {
+      label: 'Path Compression + Rank',
+      filename: 'union_find.py',
+      code: `<span class="kw">class</span> <span class="dc">UnionFind</span>:
+    <span class="st">"""
+    Disjoint Set Union with path compression + union by rank.
+    Near O(1) per operation (inverse Ackermann amortized).
+    Used by: Kruskal MST, network connectivity, image segmentation.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, n: <span class="bi">int</span>):
+        <span class="bi">self</span>.parent = <span class="bi">list</span>(<span class="bi">range</span>(n))
+        <span class="bi">self</span>.rank = [<span class="nm">0</span>] * n
+        <span class="bi">self</span>.components = n
+
+    <span class="kw">def</span> <span class="fn">find</span>(<span class="bi">self</span>, x: <span class="bi">int</span>) -> <span class="bi">int</span>:
+        <span class="st">"""Path compression: flatten tree on each find."""</span>
+        <span class="kw">if</span> <span class="bi">self</span>.parent[x] != x:
+            <span class="bi">self</span>.parent[x] = <span class="bi">self</span>.find(<span class="bi">self</span>.parent[x])
+        <span class="kw">return</span> <span class="bi">self</span>.parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(<span class="bi">self</span>, x: <span class="bi">int</span>, y: <span class="bi">int</span>) -> <span class="bi">bool</span>:
+        <span class="st">"""Union by rank. Returns False if already connected."""</span>
+        rx, ry = <span class="bi">self</span>.find(x), <span class="bi">self</span>.find(y)
+        <span class="kw">if</span> rx == ry: <span class="kw">return</span> <span class="kw">False</span>
+
+        <span class="kw">if</span> <span class="bi">self</span>.rank[rx] < <span class="bi">self</span>.rank[ry]:
+            rx, ry = ry, rx
+        <span class="bi">self</span>.parent[ry] = rx
+        <span class="kw">if</span> <span class="bi">self</span>.rank[rx] == <span class="bi">self</span>.rank[ry]:
+            <span class="bi">self</span>.rank[rx] += <span class="nm">1</span>
+        <span class="bi">self</span>.components -= <span class="nm">1</span>
+        <span class="kw">return</span> <span class="kw">True</span>
+
+    <span class="kw">def</span> <span class="fn">connected</span>(<span class="bi">self</span>, x: <span class="bi">int</span>, y: <span class="bi">int</span>) -> <span class="bi">bool</span>:
+        <span class="kw">return</span> <span class="bi">self</span>.find(x) == <span class="bi">self</span>.find(y)
+
+
+<span class="kw">def</span> <span class="fn">kruskal_mst</span>(n: <span class="bi">int</span>, edges: list[<span class="bi">tuple</span>]) -> list[<span class="bi">tuple</span>]:
+    <span class="st">"""
+    Kruskal's Minimum Spanning Tree using Union-Find.
+    Used in: Network cable layout, circuit design, clustering.
+    """</span>
+    uf = UnionFind(n)
+    mst_edges, total_cost = [], <span class="nm">0</span>
+
+    <span class="kw">for</span> cost, u, v <span class="kw">in</span> sorted(edges):
+        <span class="kw">if</span> uf.union(u, v):
+            mst_edges.append((u, v, cost))
+            total_cost += cost
+            <span class="kw">if</span> <span class="bi">len</span>(mst_edges) == n - <span class="nm">1</span>:
+                <span class="kw">break</span>
+
+    <span class="kw">return</span> mst_edges, total_cost`
+    }
+  ]
+},
+
+// ─── GEOHASH ─────────────────────────────────────────────────────
+{
+  id: 'geohash',
+  name: 'Geohash / Spatial Indexing',
+  category: 'geo',
+  icon: '📍',
+  color: '#22d3ee',
+  companies: ['Uber', 'Google Maps', 'Airbnb', 'MongoDB'],
+  description: 'Geohash encodes latitude/longitude into a short alphanumeric string where proximity in string space ≈ proximity in geography. It enables efficient k-nearest-neighbor queries for location-based services using simple string prefix matching.',
+  realWorld: 'Uber\'s H3 hexagonal grid system (a geohash variant) powers surge pricing, driver-rider matching and ETAs at 1M+ trips/day. Airbnb uses geohash to cluster listings for "nearby stays" feature. MongoDB and Redis both have native geohash support for geo queries.',
+  complexity: [
+    { case: 'Encode', time: 'O(precision)', space: 'O(1)', note: 'Typically O(1)' },
+    { case: 'Decode', time: 'O(precision)', space: 'O(1)', note: 'Constant precision' },
+    { case: 'Neighbors', time: 'O(8)', space: 'O(1)', note: '8 surrounding cells' },
+  ],
+  tags: ['Geospatial', 'Location', 'Proximity', 'String Encoding'],
+  impls: [
+    {
+      label: 'Geohash Encoder',
+      filename: 'geohash.py',
+      code: `<span class="kw">class</span> <span class="dc">Geohash</span>:
+    <span class="st">"""
+    Geohash encoding/decoding for spatial indexing.
+    Nearby geohashes = nearby locations (with edge cases).
+    Used by: Uber, Airbnb, MongoDB, Redis, PostGIS.
+    """</span>
+    BASE32 = <span class="st">'0123456789bcdefghjkmnpqrstuvwxyz'</span>
+    DECODE = {c: i <span class="kw">for</span> i, c <span class="kw">in</span> <span class="bi">enumerate</span>(BASE32)}
+
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">encode</span>(cls, lat: <span class="bi">float</span>, lng: <span class="bi">float</span>, precision: <span class="bi">int</span> = <span class="nm">9</span>) -> <span class="bi">str</span>:
+        <span class="st">"""Encode lat/lng to geohash string."""</span>
+        lat_range = [-<span class="nm">90.0</span>, <span class="nm">90.0</span>]
+        lng_range = [-<span class="nm">180.0</span>, <span class="nm">180.0</span>]
+        geohash = []
+        bits = bit_count = char_index = <span class="nm">0</span>
+        use_lng = <span class="kw">True</span>
+
+        <span class="kw">while</span> <span class="bi">len</span>(geohash) < precision:
+            r = lng_range <span class="kw">if</span> use_lng <span class="kw">else</span> lat_range
+            val = lng <span class="kw">if</span> use_lng <span class="kw">else</span> lat
+            mid = (r[<span class="nm">0</span>] + r[<span class="nm">1</span>]) / <span class="nm">2</span>
+
+            <span class="kw">if</span> val >= mid:
+                char_index = (char_index << <span class="nm">1</span>) | <span class="nm">1</span>
+                r[<span class="nm">0</span>] = mid
+            <span class="kw">else</span>:
+                char_index = (char_index << <span class="nm">1</span>)
+                r[<span class="nm">1</span>] = mid
+
+            bit_count += <span class="nm">1</span>
+            use_lng = <span class="kw">not</span> use_lng
+
+            <span class="kw">if</span> bit_count == <span class="nm">5</span>:
+                geohash.append(cls.BASE32[char_index])
+                char_index = bit_count = <span class="nm">0</span>
+
+        <span class="kw">return</span> <span class="st">''</span>.join(geohash)
+
+    <span class="op">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">decode</span>(cls, geohash: <span class="bi">str</span>) -> <span class="bi">tuple</span>[<span class="bi">float</span>, <span class="bi">float</span>]:
+        <span class="st">"""Decode geohash to (lat, lng) center point."""</span>
+        lat_range = [-<span class="nm">90.0</span>, <span class="nm">90.0</span>]
+        lng_range = [-<span class="nm">180.0</span>, <span class="nm">180.0</span>]
+        use_lng = <span class="kw">True</span>
+
+        <span class="kw">for</span> char <span class="kw">in</span> geohash:
+            bits = cls.DECODE[char]
+            <span class="kw">for</span> shift <span class="kw">in</span> [<span class="nm">4</span>, <span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">0</span>]:
+                r = lng_range <span class="kw">if</span> use_lng <span class="kw">else</span> lat_range
+                mid = (r[<span class="nm">0</span>] + r[<span class="nm">1</span>]) / <span class="nm">2</span>
+                <span class="kw">if</span> (bits >> shift) & <span class="nm">1</span>: r[<span class="nm">0</span>] = mid
+                <span class="kw">else</span>: r[<span class="nm">1</span>] = mid
+                use_lng = <span class="kw">not</span> use_lng
+
+        lat = (lat_range[<span class="nm">0</span>] + lat_range[<span class="nm">1</span>]) / <span class="nm">2</span>
+        lng = (lng_range[<span class="nm">0</span>] + lng_range[<span class="nm">1</span>]) / <span class="nm">2</span>
+        <span class="kw">return</span> lat, lng
+
+
+<span class="cm"># ── Demo: Uber-style driver lookup ──────────────────</span>
+gh = Geohash.encode(<span class="nm">37.7749</span>, -<span class="nm">122.4194</span>, precision=<span class="nm">7</span>)
+<span class="bi">print</span>(<span class="st">f"San Francisco: </span>{gh}<span class="st">"</span>)   <span class="cm"># → '9q8yy4b'</span>
+lat, lng = Geohash.decode(gh)
+<span class="bi">print</span>(<span class="st">f"Decoded: (</span>{lat:.4f}<span class="st">, </span>{lng:.4f}<span class="st">)"</span>)  <span class="cm"># ≈ (37.7749, -122.4194)</span>`
+    }
+  ]
+},
+
+// ─── HYPERLOGLOG ─────────────────────────────────────────────────
+{
+  id: 'hyperloglog',
+  name: 'HyperLogLog',
+  category: 'stream',
+  icon: '📊',
+  color: '#f97316',
+  companies: ['Redis', 'Google Analytics', 'Twitter', 'Amazon'],
+  description: 'HyperLogLog estimates the cardinality (count of distinct elements) of a multiset using only O(log log n) space with ~1.04% error. It is the algorithm behind Redis PFCOUNT, Google Analytics unique visitor counts, and Twitter trending topic tracking.',
+  realWorld: 'Redis implements HyperLogLog in just 12KB per counter, enabling Google Analytics to count unique visitors across billions of page views. Twitter uses it to estimate unique users per trending hashtag. Amazon uses it for unique product view counts in real-time.',
+  complexity: [
+    { case: 'Add', time: 'O(1)', space: 'O(log log n)', note: 'Fixed memory!' },
+    { case: 'Count', time: 'O(m)', space: 'O(log log n)', note: 'm = registers' },
+    { case: 'Error', time: '±1.04%', space: '12KB (Redis)', note: 'vs O(n) exact' },
+  ],
+  tags: ['Probabilistic', 'Cardinality', 'Streaming', 'Space Efficient'],
+  impls: [
+    {
+      label: 'HyperLogLog',
+      filename: 'hyperloglog.py',
+      code: `<span class="kw">import</span> math
+<span class="kw">import</span> hashlib
+
+<span class="kw">class</span> <span class="dc">HyperLogLog</span>:
+    <span class="st">"""
+    Approximate distinct count in O(log log n) space.
+    ~1.04/√m error where m = number of registers.
+    Used by: Redis PFCOUNT, Google Analytics, Twitter.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, b: <span class="bi">int</span> = <span class="nm">14</span>):
+        <span class="st">"""b bits → 2^b registers. b=14 → ~0.81% error, 16KB."""</span>
+        <span class="bi">self</span>.b = b
+        <span class="bi">self</span>.m = <span class="nm">2</span> ** b
+        <span class="bi">self</span>.registers = [<span class="nm">0</span>] * <span class="bi">self</span>.m
+        <span class="bi">self</span>.alpha = <span class="bi">self</span>._alpha()
+
+    <span class="kw">def</span> <span class="fn">_alpha</span>(<span class="bi">self</span>) -> <span class="bi">float</span>:
+        <span class="kw">if</span> <span class="bi">self</span>.m == <span class="nm">16</span>: <span class="kw">return</span> <span class="nm">0.673</span>
+        <span class="kw">if</span> <span class="bi">self</span>.m == <span class="nm">32</span>: <span class="kw">return</span> <span class="nm">0.697</span>
+        <span class="kw">if</span> <span class="bi">self</span>.m == <span class="nm">64</span>: <span class="kw">return</span> <span class="nm">0.709</span>
+        <span class="kw">return</span> <span class="nm">0.7213</span> / (<span class="nm">1</span> + <span class="nm">1.079</span> / <span class="bi">self</span>.m)
+
+    <span class="kw">def</span> <span class="fn">_hash</span>(<span class="bi">self</span>, item: <span class="bi">str</span>) -> <span class="bi">int</span>:
+        <span class="kw">return</span> <span class="bi">int</span>(hashlib.sha256(item.encode()).hexdigest(), <span class="nm">16</span>)
+
+    <span class="kw">def</span> <span class="fn">add</span>(<span class="bi">self</span>, item: <span class="bi">str</span>) -> <span class="kw">None</span>:
+        h = <span class="bi">self</span>._hash(item)
+        <span class="cm"># First b bits → register index</span>
+        reg = h >> (<span class="nm">64</span> - <span class="bi">self</span>.b)
+        <span class="cm"># Remaining bits → position of leftmost 1</span>
+        w = h & ((<span class="nm">1</span> << (<span class="nm">64</span> - <span class="bi">self</span>.b)) - <span class="nm">1</span>)
+        rho = (<span class="nm">64</span> - <span class="bi">self</span>.b - w.bit_length() + <span class="nm">1</span>) <span class="kw">if</span> w > <span class="nm">0</span> <span class="kw">else</span> (<span class="nm">64</span> - <span class="bi">self</span>.b + <span class="nm">1</span>)
+        <span class="bi">self</span>.registers[reg % <span class="bi">self</span>.m] = <span class="bi">max</span>(<span class="bi">self</span>.registers[reg % <span class="bi">self</span>.m], rho)
+
+    <span class="kw">def</span> <span class="fn">count</span>(<span class="bi">self</span>) -> <span class="bi">int</span>:
+        <span class="st">"""Estimate number of distinct items added."""</span>
+        Z = <span class="nm">1.0</span> / <span class="bi">sum</span>(<span class="nm">2.0</span> ** -r <span class="kw">for</span> r <span class="kw">in</span> <span class="bi">self</span>.registers)
+        estimate = <span class="bi">self</span>.alpha * <span class="bi">self</span>.m ** <span class="nm">2</span> * Z
+
+        <span class="cm"># Small range correction</span>
+        zeros = <span class="bi">self</span>.registers.count(<span class="nm">0</span>)
+        <span class="kw">if</span> estimate <= <span class="nm">2.5</span> * <span class="bi">self</span>.m <span class="kw">and</span> zeros > <span class="nm">0</span>:
+            estimate = <span class="bi">self</span>.m * math.log(<span class="bi">self</span>.m / zeros)
+        <span class="kw">return</span> <span class="bi">int</span>(estimate)
+
+
+<span class="cm"># ── Demo: Count unique visitors ─────────────────────</span>
+hll = HyperLogLog(b=<span class="nm">10</span>)
+<span class="kw">import</span> uuid
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">10_000</span>):
+    hll.add(<span class="bi">str</span>(uuid.uuid4()))
+<span class="bi">print</span>(<span class="st">f"Approx distinct: </span>{hll.count():,}<span class="st">"</span>)   <span class="cm"># ~10,000 ± 1%</span>
+<span class="bi">print</span>(<span class="st">f"Memory: only </span>{<span class="bi">len</span>(hll.registers)}<span class="st"> registers!"</span>)  <span class="cm"># 1024 integers</span>`
+    }
+  ]
+},
+
+// ─── LEVENSHTEIN DISTANCE ────────────────────────────────────────
+{
+  id: 'levenshtein',
+  name: 'Edit Distance (Levenshtein)',
+  category: 'dp',
+  icon: '✏️',
+  color: '#fb7185',
+  companies: ['Google Spell Check', 'GitHub diff', 'DNA Sequencing', 'Grammarly'],
+  description: 'Edit distance computes the minimum number of insertions, deletions, and substitutions to transform one string into another using dynamic programming. It powers spell checkers, diff tools, DNA alignment, and fuzzy search across billions of queries.',
+  realWorld: 'Google Spell Check uses edit distance variants to suggest corrections for 15% of all queries containing typos. GitHub\'s diff view uses Myers algorithm (edit distance variant). BLAST (bioinformatics) uses it to align DNA sequences, enabling drug discovery.',
+  complexity: [
+    { case: 'Time', time: 'O(mn)', space: 'O(mn)', note: 'm, n = string lengths' },
+    { case: 'Space optimized', time: 'O(mn)', space: 'O(min(m,n))', note: '2 rows only' },
+    { case: 'Ukkonen\'s', time: 'O(kn)', space: 'O(k)', note: 'k = max edits' },
+  ],
+  tags: ['Dynamic Programming', 'String', 'Spell Check', 'NLP'],
+  impls: [
+    {
+      label: 'Classic DP',
+      filename: 'levenshtein.py',
+      code: `<span class="kw">def</span> <span class="fn">levenshtein</span>(s1: <span class="bi">str</span>, s2: <span class="bi">str</span>) -> <span class="bi">int</span>:
+    <span class="st">"""
+    Edit distance via dynamic programming.
+    Time: O(mn) | Space: O(mn)
+    Used by: Google spell check, GitHub diff, bioinformatics.
+    """</span>
+    m, n = <span class="bi">len</span>(s1), <span class="bi">len</span>(s2)
+    dp = [[<span class="nm">0</span>] * (n + <span class="nm">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="bi">range</span>(m + <span class="nm">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(m + <span class="nm">1</span>): dp[i][<span class="nm">0</span>] = i
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="bi">range</span>(n + <span class="nm">1</span>): dp[<span class="nm">0</span>][j] = j
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>, m + <span class="nm">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>, n + <span class="nm">1</span>):
+            cost = <span class="nm">0</span> <span class="kw">if</span> s1[i-<span class="nm">1</span>] == s2[j-<span class="nm">1</span>] <span class="kw">else</span> <span class="nm">1</span>
+            dp[i][j] = <span class="bi">min</span>(
+                dp[i-<span class="nm">1</span>][j] + <span class="nm">1</span>,      <span class="cm"># Delete</span>
+                dp[i][j-<span class="nm">1</span>] + <span class="nm">1</span>,      <span class="cm"># Insert</span>
+                dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>] + cost  <span class="cm"># Substitute</span>
+            )
+
+    <span class="kw">return</span> dp[m][n]
+
+
+<span class="kw">def</span> <span class="fn">levenshtein_optimized</span>(s1: <span class="bi">str</span>, s2: <span class="bi">str</span>) -> <span class="bi">int</span>:
+    <span class="st">"""Space-optimized O(min(m,n)) version with 2 rows."""</span>
+    <span class="kw">if</span> <span class="bi">len</span>(s1) < <span class="bi">len</span>(s2): s1, s2 = s2, s1
+    m, n = <span class="bi">len</span>(s1), <span class="bi">len</span>(s2)
+    prev = <span class="bi">list</span>(<span class="bi">range</span>(n + <span class="nm">1</span>))
+
+    <span class="kw">for</span> i, c1 <span class="kw">in</span> <span class="bi">enumerate</span>(s1, <span class="nm">1</span>):
+        curr = [i] + [<span class="nm">0</span>] * n
+        <span class="kw">for</span> j, c2 <span class="kw">in</span> <span class="bi">enumerate</span>(s2, <span class="nm">1</span>):
+            curr[j] = <span class="bi">min</span>(prev[j]+<span class="nm">1</span>, curr[j-<span class="nm">1</span>]+<span class="nm">1</span>,
+                          prev[j-<span class="nm">1</span>]+(<span class="nm">0</span> <span class="kw">if</span> c1==c2 <span class="kw">else</span> <span class="nm">1</span>))
+        prev = curr
+    <span class="kw">return</span> prev[n]
+
+
+<span class="kw">def</span> <span class="fn">spell_suggest</span>(word: <span class="bi">str</span>, dictionary: list[<span class="bi">str</span>], top_k=<span class="nm">3</span>) -> list[<span class="bi">str</span>]:
+    <span class="st">"""Return top-k closest words. Used in spell checkers."""</span>
+    scored = [(levenshtein_optimized(word, w), w) <span class="kw">for</span> w <span class="kw">in</span> dictionary]
+    <span class="kw">return</span> [w <span class="kw">for</span> _, w <span class="kw">in</span> sorted(scored)[:top_k]]
+
+<span class="cm"># spell_suggest("recieve", ["receive","relieve","believe"]) → ["receive", ...]</span>`
+    }
+  ]
+},
+
+// ─── RATE LIMITING ───────────────────────────────────────────────
+{
+  id: 'rate-limiting',
+  name: 'Token Bucket / Rate Limiting',
+  category: 'distributed',
+  icon: '🚦',
+  color: '#34d399',
+  companies: ['Stripe', 'Cloudflare', 'Twitter API', 'AWS API Gateway'],
+  description: 'Token bucket allows bursting up to a maximum capacity while refilling tokens at a fixed rate. It is the core mechanism behind API rate limiting at Stripe, Cloudflare DDoS protection, AWS API Gateway throttling, and Twitter\'s developer API.',
+  realWorld: 'Stripe uses token bucket rate limiting to protect its payment API from abuse while allowing legitimate bursting. Cloudflare uses sliding window rate limiting to block DDoS attacks reaching 71M requests/second. AWS API Gateway enforces per-customer token bucket limits.',
+  complexity: [
+    { case: 'Allow/Deny', time: 'O(1)', space: 'O(1)', note: 'Per user bucket' },
+    { case: 'Refill', time: 'O(1)', space: 'O(1)', note: 'Lazy refill on check' },
+    { case: 'Sliding Window', time: 'O(n)', space: 'O(n)', note: 'n = window events' },
+  ],
+  tags: ['Rate Limiting', 'API', 'Distributed', 'Throttling'],
+  impls: [
+    {
+      label: 'Token Bucket',
+      filename: 'token_bucket.py',
+      code: `<span class="kw">import</span> time
+<span class="kw">from</span> threading <span class="kw">import</span> Lock
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">class</span> <span class="dc">TokenBucket</span>:
+    <span class="st">"""
+    Token bucket rate limiter.
+    Allows bursting up to capacity, refills at rate/sec.
+    Used by: Stripe, AWS API Gateway, NGINX.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, rate: <span class="bi">float</span>, capacity: <span class="bi">float</span>):
+        <span class="bi">self</span>.rate = rate          <span class="cm"># Tokens added per second</span>
+        <span class="bi">self</span>.capacity = capacity  <span class="cm"># Max tokens (burst limit)</span>
+        <span class="bi">self</span>.tokens = capacity
+        <span class="bi">self</span>.last_refill = time.monotonic()
+        <span class="bi">self</span>.lock = Lock()
+
+    <span class="kw">def</span> <span class="fn">_refill</span>(<span class="bi">self</span>) -> <span class="kw">None</span>:
+        now = time.monotonic()
+        elapsed = now - <span class="bi">self</span>.last_refill
+        <span class="bi">self</span>.tokens = <span class="bi">min</span>(<span class="bi">self</span>.capacity,
+                          <span class="bi">self</span>.tokens + elapsed * <span class="bi">self</span>.rate)
+        <span class="bi">self</span>.last_refill = now
+
+    <span class="kw">def</span> <span class="fn">allow</span>(<span class="bi">self</span>, tokens: <span class="bi">float</span> = <span class="nm">1.0</span>) -> <span class="bi">bool</span>:
+        <span class="st">"""Returns True if request is allowed."""</span>
+        <span class="kw">with</span> <span class="bi">self</span>.lock:
+            <span class="bi">self</span>._refill()
+            <span class="kw">if</span> <span class="bi">self</span>.tokens >= tokens:
+                <span class="bi">self</span>.tokens -= tokens
+                <span class="kw">return</span> <span class="kw">True</span>
+            <span class="kw">return</span> <span class="kw">False</span>
+
+
+<span class="kw">class</span> <span class="dc">SlidingWindowCounter</span>:
+    <span class="st">"""
+    Sliding window rate limiter — more accurate than fixed windows.
+    Used by: Cloudflare DDoS protection, Twitter API.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="bi">self</span>, limit: <span class="bi">int</span>, window_secs: <span class="bi">float</span>):
+        <span class="bi">self</span>.limit = limit
+        <span class="bi">self</span>.window = window_secs
+        <span class="bi">self</span>.requests: dict[<span class="bi">str</span>, list] = defaultdict(<span class="bi">list</span>)
+        <span class="bi">self</span>.lock = Lock()
+
+    <span class="kw">def</span> <span class="fn">allow</span>(<span class="bi">self</span>, key: <span class="bi">str</span>) -> <span class="bi">bool</span>:
+        now = time.monotonic()
+        cutoff = now - <span class="bi">self</span>.window
+        <span class="kw">with</span> <span class="bi">self</span>.lock:
+            <span class="cm"># Remove expired entries</span>
+            times = [t <span class="kw">for</span> t <span class="kw">in</span> <span class="bi">self</span>.requests[key] <span class="kw">if</span> t > cutoff]
+            <span class="kw">if</span> <span class="bi">len</span>(times) < <span class="bi">self</span>.limit:
+                times.append(now)
+                <span class="bi">self</span>.requests[key] = times
+                <span class="kw">return</span> <span class="kw">True</span>
+            <span class="bi">self</span>.requests[key] = times
+            <span class="kw">return</span> <span class="kw">False</span>
+
+
+<span class="cm"># ── Demo ────────────────────────────────────────────</span>
+limiter = TokenBucket(rate=<span class="nm">10</span>, capacity=<span class="nm">50</span>)  <span class="cm"># 10 req/s, burst 50</span>
+<span class="bi">print</span>(limiter.allow())  <span class="cm"># True (burst available)</span>`
+    }
+  ]
+},
+
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+const CAT_COLORS = {
+  search: '#60a5fa', graph: '#a78bfa', ml: '#f59e0b',
+  distributed: '#34d399', dp: '#fb7185', sort: '#38bdf8',
+  string: '#e879f9', crypto: '#fbbf24', cache: '#4ade80',
+  stream: '#f97316', tree: '#84cc16', geo: '#22d3ee'
+};
+
+const CAT_KEYS = ['search','graph','ml','distributed','dp','sort','string','crypto','cache','stream','tree','geo'];
+
+function updateCounts(data) {
+  document.getElementById('algoCount').textContent = ALGORITHMS.length;
+  document.getElementById('countAll').textContent = ALGORITHMS.length;
+  CAT_KEYS.forEach(cat => {
+    const el = document.getElementById('count' + cat.charAt(0).toUpperCase() + cat.slice(1));
+    if (el) el.textContent = ALGORITHMS.filter(a => a.category === cat).length;
+  });
+}
+
+function renderCard(algo) {
+  const color = algo.color;
+  const companies = algo.companies.slice(0,3).join(' · ');
+  return `
+    <div class="algo-card" onclick="openModal('${algo.id}')">
+      <div class="algo-card-header">
+        <div class="algo-icon" style="background:${color}18; font-size:1.2rem">${algo.icon}</div>
+        <div>
+          <div class="algo-card-title">${algo.name}</div>
+          <div class="algo-card-company">${companies}</div>
+        </div>
+      </div>
+      <div class="algo-card-body">${algo.description.substring(0, 120)}...</div>
+      <div class="algo-card-footer">
+        ${algo.tags.slice(0,2).map(t => `<span class="badge" style="background:${color}18;color:${color};border:1px solid ${color}30">${t}</span>`).join('')}
+        <span class="complexity-badge">${algo.complexity[0].time}</span>
+      </div>
+    </div>`;
+}
+
+function renderGrid(data) {
+  const grid = document.getElementById('algoGrid');
+  const noRes = document.getElementById('noResults');
+  if (!data.length) {
+    grid.innerHTML = '';
+    noRes.classList.add('show');
+    return;
+  }
+  noRes.classList.remove('show');
+  grid.innerHTML = data.map(renderCard).join('');
+}
+
+let currentCat = 'all';
+let currentSearch = '';
+
+function filterAndRender() {
+  let data = ALGORITHMS;
+  if (currentCat !== 'all') data = data.filter(a => a.category === currentCat);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    data = data.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.description.toLowerCase().includes(q) ||
+      a.companies.some(c => c.toLowerCase().includes(q)) ||
+      a.tags.some(t => t.toLowerCase().includes(q)) ||
+      a.category.includes(q)
+    );
+  }
+  const title = document.getElementById('sectionTitle');
+  const catName = currentCat === 'all' ? 'All Algorithms' : currentCat.charAt(0).toUpperCase() + currentCat.slice(1);
+  title.innerHTML = `${catName} <span>${data.length} algorithm${data.length !== 1 ? 's' : ''}</span>`;
+  renderGrid(data);
+}
+
+// Category buttons
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    filterAndRender();
+  });
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  filterAndRender();
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════════════
+
+let currentImpl = 0;
+
+function openModal(id) {
+  const algo = ALGORITHMS.find(a => a.id === id);
+  if (!algo) return;
+  currentImpl = 0;
+
+  document.getElementById('mIcon').innerHTML = algo.icon;
+  document.getElementById('mIcon').style.cssText = `background:${algo.color}18; font-size:1.5rem; width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center;`;
+  document.getElementById('mTitle').textContent = algo.name;
+  document.getElementById('mSubtitle').textContent = algo.companies.join(' · ');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-label">Best Case</div>
+        <div class="info-card-value">${algo.complexity[0].time}</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Space</div>
+        <div class="info-card-value">${algo.complexity[0].space}</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Category</div>
+        <div class="info-card-value" style="color:${algo.color}">${algo.category}</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-label">Implementations</div>
+        <div class="info-card-value">${algo.impls.length}</div>
+      </div>
+    </div>
+
+    <div class="modal-tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'tab-overview')">Overview</button>
+      <button class="tab-btn" onclick="switchTab(this,'tab-code')">Python Code</button>
+      <button class="tab-btn" onclick="switchTab(this,'tab-complexity')">Complexity</button>
+    </div>
+
+    <div id="tab-overview" class="tab-content active">
+      <div class="description-block">${algo.description}</div>
+      <div class="real-world-block">
+        <h4>🏢 Real-World Impact</h4>
+        <p>${algo.realWorld}</p>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        ${algo.tags.map(t => `<span class="badge" style="background:${algo.color}18;color:${algo.color};border:1px solid ${algo.color}30;font-size:.75rem;padding:4px 10px">${t}</span>`).join('')}
+      </div>
+    </div>
+
+    <div id="tab-code" class="tab-content">
+      <div class="impl-selector">
+        ${algo.impls.map((impl, i) => `<button class="impl-btn ${i===0?'active':''}" onclick="switchImpl(this,${i},'${id}')">${impl.label}</button>`).join('')}
+      </div>
+      <div id="code-display">
+        ${renderCodeBlock(algo.impls[0])}
+      </div>
+    </div>
+
+    <div id="tab-complexity" class="tab-content">
+      <table class="complexity-table">
+        <thead><tr><th>Case</th><th>Time</th><th>Space</th><th>Notes</th></tr></thead>
+        <tbody>
+          ${algo.complexity.map(c => `
+            <tr>
+              <td>${c.case}</td>
+              <td class="${c.time.startsWith('O(1)') || c.time.startsWith('O(log') ? 'good' : c.time.startsWith('O(n)') ? 'ok' : 'bad'}">${c.time}</td>
+              <td class="${c.space.startsWith('O(1)') || c.space.startsWith('O(log') ? 'good' : 'ok'}">${c.space}</td>
+              <td style="color:var(--muted)">${c.note}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top:1rem">
+        <div class="description-block">
+          <b>Color Key:</b> <span style="color:#98c379">■ Excellent</span> &nbsp; <span style="color:#f59e0b">■ Acceptable</span> &nbsp; <span style="color:#ef4444">■ Costly</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderCodeBlock(impl) {
+  return `
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-filename">${impl.filename}</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <pre>${impl.code}</pre>
+    </div>`;
+}
+
+function switchImpl(btn, idx, algoId) {
+  document.querySelectorAll('.impl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const algo = ALGORITHMS.find(a => a.id === algoId);
+  document.getElementById('code-display').innerHTML = renderCodeBlock(algo.impls[idx]);
+}
+
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+updateCounts();
+filterAndRender();
+</script>
+</body>
+</html>
